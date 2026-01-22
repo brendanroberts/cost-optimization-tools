@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Example</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow-md p-4">
+        <h1 class="text-2xl font-bold">Chart Example</h1>
+    </header>
+
+    <div class="container mx-auto p-4">
+        <h2 class="text-xl font-bold mb-4">Line Chart with Shaded Band</h2>
+        <form id="chart-form" class="mb-4">
+            <div class="flex items-center mb-2">
+                <label for="monthly_spend" class="mr-2">Monthly Spend:</label>
+                <input type="number" id="monthly_spend" name="monthly_spend" value="1000"
+                    class="border p-2 rounded mr-4">
+            </div>
+            <div class="flex items-center mb-2">
+                <label for="savings_rate" class="mr-2">Savings Rate:</label>
+                <input type="number" id="savings_rate" name="savings_rate" value="14" class="border p-2 rounded mr-4">
+            </div>
+            <div class="flex items-center mb-2">
+                <label for="months" class="mr-2">Months:</label>
+                <input type="number" id="months" name="months" value="36" class="border p-2 rounded mr-4">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Generate
+                Chart</button>
+        </form>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <footer class="bg-gray-800 text-white text-center py-4">
+        &copy; 2026 Chart Example. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

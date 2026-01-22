@@ -1,0 +1,6 @@
+if you mess with Tailwind, you need to rebuild the CSS with this command:
+
+./tailwindcss \
+  -i input.css \
+  -o styles.css \
+  --minify
