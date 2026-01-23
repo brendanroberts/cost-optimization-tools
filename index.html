@@ -1,72 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chart Example</title>
-    <link href="styles.css" rel="stylesheet">
+    <title>Cost optimization - potential scenarios</title>
+    <meta name="author" content="Brendan Roberts">
+    <meta name="description" content="">
+
+    <!-- Tailwind -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
+        .font-family-karla { font-family: "Libre Franklin", sans-serif; }
+        .bg-navyblue { background: #001f3f; }
+        .bg-blue-500 { background: #1a3831; }
+        .bg-blue-700 { background: #112321; }
+        .cta-btn { color: #001f3f; }
+        .active-nav-link { background: #07100c; }
+        .nav-item:hover { background: #07100c; }
+        .account-link:hover { background: #07100c; }
+    </style>
 </head>
+<body class="bg-gray-100 font-family-karla flex">
+    <aside class="relative bg-navyblue h-screen w-64 hidden sm:block shadow-xl">
+        <div class="p-6">
+            <button class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
+                <i class="fas fa-plus mr-3"></i> Add Category
+            </button>
+        </div>
+        
+        <!-- place additional category forms here -->
+    </aside>
 
-<body class="bg-gray-100 font-sans">
-    <header class="bg-white shadow-md p-4">
-        <h1 class="text-2xl font-bold">Chart Example</h1>
-    </header>
+    <div class="w-full flex flex-col h-screen overflow-y-hidden">
+        <div class="w-full overflow-x-hidden border-t flex flex-col">
+            <main class="w-full flex-grow p-6">
+                <h1 class="text-3xl text-black pb-6">Cost optimization - potential scenarios</h1>
+                <p class="mb-4 text-sm text-gray-700">Savings estimations for optimized vendor expenses. <br> 
+                    Median rate is 14% with a ±10% shaded range. <br>
+                    <i>Example: what if we improved our monthly telecom spend by 14% give or take?</i></p>
 
-    <div class="container mx-auto p-4">
-        <h2 class="text-xl font-bold mb-4">Cumulative Savings Chart</h2>
-
-        <!-- Initial modal: appears on first load unless URL state present -->
-        <div id="initial-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded p-6 w-full max-w-lg">
-                <h3 class="text-lg font-bold mb-4">Get started</h3>
-                <p class="mb-4">Enter at least one category and monthly spend (whole dollars).</p>
+                <div class="flex flex-wrap mt-6">
+                    <div class="w-full pr-0 lg:pr-2">
+                        <p class="text-xl pb-3 flex items-center">
+                            <!-- Controls -->
+                            <form id="chart-form" class="mb-6 flex flex-wrap items-center gap-4">
+                                <div class="flex items-center">
+                                    <label for="months" class="mr-2 text-sm font-medium">Months:</label>
+                                    <select id="months" name="months" class="border p-3 rounded-md text-sm">
+                                        <option value="36">36</option>
+                                        <option value="48">48</option>
+                                        <option value="60">60</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <button type="button" id="add-category" class="bg-gray-200 px-3 py-2 rounded-md text-sm">Add Category</button>
+                                </div>
+                                <div class="flex-1 text-right">
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">Render Chart</button>
+                                </div>
+                            </form>
+                        </p>
+                        <div class="p-6 bg-white">
+                            <canvas id="myChart" class="w-full" style="height:420px"></canvas>
+                        </div>
+                    </div>        
+                </div>
+    
+            
+                <!-- schedule table -->
+                <div class="w-full mt-12">
+                    <p class="text-xl pb-3 flex items-center">
+                        Monthly Savings Breakdown
+                    </p>
+                    <div id="data-table" class="bg-white overflow-auto"></div>
+                </div>
+            </main>
+    
+        </div>
+        
+    </div>
+    
+    <!-- Initial modal: appears on first load unless URL state present -->
+    <div id="initial-modal" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:9999;">
+        <div id="modal-backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.55);"></div>
+        <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:clamp(320px, 90%, 720px); z-index:10000;">
+            <div class="bg-white rounded-lg p-6 shadow-lg" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+                <div class="flex items-start justify-between">
+                    <h3 id="modal-title" class="text-lg font-bold mb-2">Get started</h3>
+                    <button id="modal-close" aria-label="Close" class="text-gray-500 hover:text-gray-700">✕</button>
+                </div>
+                <p class="mb-4 text-sm text-gray-700">Enter at least one category and monthly spend (whole dollars).</p>
                 <form id="modal-form" class="space-y-3">
                     <div>
                         <label class="block text-sm font-medium">Category name</label>
-                        <input type="text" id="modal-category" class="border p-2 rounded w-full" value="General">
+                        <input type="text" id="modal-category" class="border p-3 rounded-md w-full text-sm" value="General">
                     </div>
                     <div>
                         <label class="block text-sm font-medium">Monthly spend (USD)</label>
-                        <input type="number" id="modal-monthly" class="border p-2 rounded w-full" value="1000" min="0">
+                        <input type="number" id="modal-monthly" class="border p-3 rounded-md w-full text-sm" value="1000" min="0">
                     </div>
                     <div class="flex gap-2 justify-end mt-4">
-                        <button type="button" id="modal-start" class="bg-blue-500 text-white px-4 py-2 rounded">Start</button>
+                        <button type="button" id="modal-start" class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm">Start</button>
                     </div>
                 </form>
             </div>
         </div>
-
-        <!-- Top controls -->
-        <form id="chart-form" class="mb-4 flex flex-wrap items-center gap-4">
-            <div class="flex items-center">
-                <label for="months" class="mr-2">Months:</label>
-                <select id="months" name="months" class="border p-2 rounded">
-                    <option value="36">36</option>
-                    <option value="48">48</option>
-                    <option value="60">60</option>
-                </select>
-            </div>
-            <div class="flex items-center">
-                <button type="button" id="add-category" class="bg-gray-200 px-3 py-1 rounded">Add Category</button>
-            </div>
-            <div class="flex-1 text-right">
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">Render Chart</button>
-            </div>
-        </form>
-
-        <canvas id="myChart"></canvas>
-
-        <!-- Table under the chart -->
-        <div id="data-table" class="mt-6 overflow-auto"></div>
     </div>
 
-    <footer class="bg-gray-800 text-white text-center py-4">
-        &copy; 2026 Chart Example. All rights reserved.
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script type="module" src="./main.js"></script>
+    
 </body>
-
 </html>

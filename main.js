@@ -1,6 +1,7 @@
 import { aggregateCategories } from './calculations.js';
 
 let chartInstance = null;
+let previousActiveElement = null;
 
 function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
@@ -93,7 +94,30 @@ function pushStateToUrl(state) {
 
 function showModal(show) {
   const m = document.getElementById('initial-modal');
-  if (show) m.classList.remove('hidden'); else m.classList.add('hidden');
+  if (!m) return;
+  if (show) {
+    previousActiveElement = document.activeElement;
+    m.classList.remove('hidden');
+    m.setAttribute('aria-hidden', 'false');
+    // focus first input
+    const first = m.querySelector('#modal-category');
+    if (first) first.focus();
+    // add keydown listener for Escape
+    document.addEventListener('keydown', handleModalKeydown);
+  } else {
+    m.classList.add('hidden');
+    m.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', handleModalKeydown);
+    // restore focus
+    if (previousActiveElement && previousActiveElement.focus) previousActiveElement.focus();
+    previousActiveElement = null;
+  }
+}
+
+function handleModalKeydown(e) {
+  if (e.key === 'Escape') {
+    showModal(false);
+  }
 }
 
 function ensureAtLeastOneCategory(state) {
@@ -136,6 +160,14 @@ function main() {
     pushStateToUrl(state);
     showModal(false);
   });
+
+  // Close button
+  const modalClose = document.getElementById('modal-close');
+  if (modalClose) modalClose.addEventListener('click', () => showModal(false));
+
+  // Backdrop click closes modal
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  if (modalBackdrop) modalBackdrop.addEventListener('click', () => showModal(false));
 
   // Add category: open a quick prompt (keeps implementation light)
   document.getElementById('add-category').addEventListener('click', () => {

@@ -1,7 +1,7 @@
 // Calculation helpers for cumulative savings
 export function computeCategoryCumulative(monthlySpend, medianRateDecimal, months) {
-  const lowRate = medianRateDecimal * 0.8;
-  const highRate = medianRateDecimal * 1.2;
+  const lowRate = medianRateDecimal * 0.9;
+  const highRate = medianRateDecimal * 1.1;
 
   let totalLow = 0;
   let totalMedian = 0;
