@@ -26,7 +26,7 @@
     <aside class="relative bg-navyblue h-screen w-64 hidden sm:block shadow-xl">
         <div class="p-6 text-white">
             <h3 class="text-lg font-semibold mb-3">Categories</h3>
-            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
+            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
                 <i class="fas fa-plus mr-3"></i> Add Category
             </button>
             <div id="categories-list" class="space-y-3 mt-4">
@@ -42,7 +42,7 @@
             <main class="w-full flex-grow p-6">
                 <h1 class="text-3xl text-black pb-6">Cost optimization - potential scenarios</h1>
                 <p class="mb-4 text-sm text-gray-700">Savings estimations for optimized vendor expenses. <br> 
-                    Savings rate is 14% with a ±10% shaded range. <br>
+                    By default, the savings rate is 14% with a ±10% shaded range indicating fudge factor. <br>
                     <i>Example: what if we improved our monthly telecom spend by 14% give or take?</i></p>
 
                 <div class="flex flex-wrap mt-6">
@@ -56,14 +56,19 @@
                                         <option value="36">36</option>
                                         <option value="48">48</option>
                                         <option value="60">60</option>
+                                        <option value="72">72</option>
                                     </select>
+                                    <div class="flex items-center ml-4">
+                                        <label for="view-mode" class="mr-2 text-sm font-medium">View:</label>
+                                        <select id="view-mode" name="view-mode" class="border p-3 rounded-md text-sm">
+                                            <option value="cumulative">Cumulative</option>
+                                            <option value="monthly">Monthly</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="flex items-center">
-                                    <button type="button" id="add-category" class="bg-gray-200 px-3 py-2 rounded-md text-sm">Add Category</button>
-                                </div>
+                                
                                 <div class="flex-1 text-right flex items-center justify-end gap-2">
                                     <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm">Reset</button>
-                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">Render Chart</button>
                                 </div>
                             </form>
                         </p>
@@ -76,8 +81,8 @@
             
                 <!-- schedule table -->
                 <div class="w-full mt-12">
-                    <p class="text-xl pb-3 flex items-center">
-                        Monthly Savings Breakdown
+                    <p id="table-title" class="text-xl pb-3 flex items-center">
+                        Cumulative Savings
                     </p>
                     <div id="data-table" class="bg-white overflow-auto"></div>
                 </div>
@@ -96,11 +101,11 @@
                     <h3 id="modal-title" class="text-lg font-bold mb-2">Get started</h3>
                     <button id="modal-close" aria-label="Close" class="text-gray-500 hover:text-gray-700">✕</button>
                 </div>
-                <p class="mb-4 text-sm text-gray-700">Enter at least one category and monthly spend (whole dollars).</p>
+                <p class="mb-4 text-sm text-gray-700">Enter at least one category and monthly spend.</p>
                 <form id="modal-form" class="space-y-3">
                     <div>
                         <label class="block text-sm font-medium">Category name</label>
-                        <input type="text" id="modal-category" class="border p-3 rounded-md w-full text-sm" value="General">
+                        <input type="text" id="modal-category" class="border p-3 rounded-md w-full text-sm" placeholder="wireless telecom">
                     </div>
                     <div>
                         <label class="block text-sm font-medium">Monthly spend (USD)</label>

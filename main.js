@@ -4,11 +4,35 @@ let chartInstance = null;
 let previousActiveElement = null;
 let currentState = null;
 
+// Color palette used across charts
+const PALETTE = {
+  navyblue: '#001f3f',
+  'navyblue-50': '#8ecae6',
+  'navyblue-100': '#45a29e',
+  'navyblue-200': '#34675c',
+  'navyblue-300': '#2d4f4a',
+  'navyblue-400': '#23413b',
+  'navyblue-500': '#1a3831',
+  'navyblue-600': '#152e27',
+  'navyblue-700': '#112321',
+  'navyblue-800': '#0b1914',
+  'navyblue-900': '#07100c'
+};
+
+function hexToRgba(hex, alpha = 1) {
+  const h = hex.replace('#', '');
+  const bigint = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 }
 
-function renderTable(months, low, median, high) {
+function renderCumulativeTable(months, low, median, high) {
   const container = document.getElementById('data-table');
   let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th><th class="p-2 text-right">Low</th><th class="p-2 text-right">Median</th><th class="p-2 text-right">High</th></tr></thead><tbody>';
   for (let i = 0; i < months; i++) {
@@ -18,7 +42,30 @@ function renderTable(months, low, median, high) {
   container.innerHTML = html;
 }
 
-function renderChart(months, low, median, high) {
+function renderMonthlyTable(months, categories) {
+  const container = document.getElementById('data-table');
+  const catNames = categories.map(c => c.name || 'Category');
+  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th>';
+  catNames.forEach(name => { html += `<th class="p-2 text-right">${name}</th>`; });
+  html += '<th class="p-2 text-right">Total</th></tr></thead><tbody>';
+
+  for (let m = 0; m < months; m++) {
+    let row = `<tr class="border-b"><td class="p-2">${m+1}</td>`;
+    let total = 0;
+    categories.forEach(cat => {
+      const monthly = Number(cat.monthly_spend) || 0;
+      const value = Math.round(monthly * (cat.medianRateDecimal ?? 0.14));
+      total += value;
+      row += `<td class="p-2 text-right">${formatUSD(value)}</td>`;
+    });
+    row += `<td class="p-2 text-right">${formatUSD(total)}</td></tr>`;
+    html += row;
+  }
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function renderCumulativeChart(months, low, median, high) {
   const canvas = document.getElementById('myChart');
   // enforce fixed canvas height so re-renders don't grow the chart
   const FIXED_HEIGHT_PX = 420;
@@ -47,7 +94,7 @@ function renderChart(months, low, median, high) {
     label: 'High',
     data: high,
     borderColor: 'rgba(0,0,0,0)',
-    backgroundColor: 'rgba(0, 51, 102, 0.18)',
+    backgroundColor: hexToRgba(PALETTE['navyblue-100'], 0.18),
     pointRadius: 0,
     fill: '-1',
     tension: 0.2,
@@ -56,7 +103,7 @@ function renderChart(months, low, median, high) {
   const medianDataset = {
     label: 'Median (14%)',
     data: median,
-    borderColor: 'rgba(0, 51, 102, 1)',
+    borderColor: PALETTE['navyblue-500'],
     backgroundColor: 'rgba(0,0,0,0)',
     pointRadius: 2,
     fill: false,
@@ -80,6 +127,61 @@ function renderChart(months, low, median, high) {
       interaction: { intersect: false, mode: 'index' }
     }
   });
+}
+
+function renderMonthlyChart(months, categories) {
+  const canvas = document.getElementById('myChart');
+  const FIXED_HEIGHT_PX = 420;
+  canvas.style.height = FIXED_HEIGHT_PX + 'px';
+  canvas.height = FIXED_HEIGHT_PX;
+  const ctx = canvas.getContext('2d');
+  const labels = Array.from({ length: months }, (_, i) => i + 1);
+
+  if (chartInstance) chartInstance.destroy();
+
+  const paletteKeys = ['navyblue-50','navyblue-100','navyblue-200','navyblue-300','navyblue-400','navyblue-500','navyblue-600','navyblue-700'];
+  const colors = categories.map((c, idx) => PALETTE[paletteKeys[idx % paletteKeys.length]] || PALETTE.navyblue);
+  const datasets = categories.map((cat, idx) => {
+    const monthly = Number(cat.monthly_spend) || 0;
+    const value = Math.round(monthly * (cat.medianRateDecimal ?? 0.14));
+    const data = new Array(months).fill(value);
+    return {
+      label: cat.name || `Cat ${idx+1}`,
+      data,
+      backgroundColor: colors[idx],
+      stack: 'savings'
+    };
+  });
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      scales: {
+        x: { stacked: true, title: { display: true, text: 'Month' } },
+        y: { stacked: true, title: { display: true, text: 'Monthly Savings (USD)' }, ticks: { callback: v => formatUSD(v) } }
+      },
+      plugins: { tooltip: { enabled: true } }
+    }
+  });
+}
+
+function renderFromState(state) {
+  if (!state) return;
+  const months = state.months || 36;
+  const view = state.view || 'cumulative';
+  const titleEl = document.getElementById('table-title');
+  if (titleEl) titleEl.innerText = (view === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
+  if (view === 'monthly') {
+    renderMonthlyChart(months, state.categories || []);
+    renderMonthlyTable(months, state.categories || []);
+  } else {
+    const agg = aggregateCategories(state.categories || [], months);
+    renderCumulativeChart(months, agg.low, agg.median, agg.high);
+    renderCumulativeTable(months, agg.low, agg.median, agg.high);
+  }
 }
 
 function getStateFromUrl() {
@@ -149,7 +251,7 @@ function handleModalKeydown(e) {
 
 function ensureAtLeastOneCategory(state) {
   if (!state.categories || !state.categories.length) {
-    state.categories = [{ name: 'General', monthly_spend: 1000, medianRateDecimal: 0.14 }];
+    state.categories = [{ name: 'wireless telecom', monthly_spend: 1000, medianRateDecimal: 0.14 }];
   }
 }
 
@@ -176,6 +278,12 @@ function renderCategoryList(state) {
       cat.name = e.target.value || 'Category';
       pushStateToUrl(state);
     });
+    // update category labels live as user types
+    nameInput.addEventListener('keyup', (e) => {
+      cat.name = e.target.value || 'Category';
+      pushStateToUrl(state);
+      renderFromState(state);
+    });
 
     const bottomRow = document.createElement('div');
     bottomRow.className = 'mt-2';
@@ -191,10 +299,7 @@ function renderCategoryList(state) {
       const v = parseInt(cleaned || '0', 10) || 0;
       cat.monthly_spend = v;
       pushStateToUrl(state);
-      const months = state.months || parseInt(document.getElementById('months')?.value || '36', 10);
-      const agg = aggregateCategories(state.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(state);
     });
 
     bottomRow.appendChild(spendInput);
@@ -218,10 +323,7 @@ function renderCategoryList(state) {
       const p = parseFloat(cleaned);
       cat.medianRateDecimal = (isNaN(p) ? 0.14 : p / 100);
       pushStateToUrl(state);
-      const months = state.months || parseInt(document.getElementById('months')?.value || '36', 10);
-      const agg = aggregateCategories(state.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(state);
     });
 
     const percentSpan = document.createElement('span');
@@ -249,10 +351,7 @@ function renderCategoryList(state) {
       state.categories.splice(idx, 1);
       pushStateToUrl(state);
       renderCategoryList(state);
-      const months = state.months || 36;
-      const agg = aggregateCategories(state.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(state);
     });
 
     container.appendChild(leftCol);
@@ -271,15 +370,18 @@ function addCategoryToState(state, name = 'New Category', monthly = 1000) {
 function loadFromState(state) {
   ensureAtLeastOneCategory(state);
   document.getElementById('months').value = state.months || 36;
+  const viewEl = document.getElementById('view-mode');
+  if (viewEl) viewEl.value = state.view || 'cumulative';
 }
 
 function collectStateFromUI(existingState) {
   const months = parseInt(document.getElementById('months').value, 10) || 36;
   const state = existingState || {};
   state.months = months;
+  state.view = document.getElementById('view-mode')?.value || 'cumulative';
   // if categories already defined (from modal or URL), keep them; otherwise try to use modal inputs
   if (!state.categories || !state.categories.length) {
-    const name = document.getElementById('modal-category')?.value || 'General';
+    const name = document.getElementById('modal-category')?.value || 'wireless telecom';
     const monthly = parseInt(document.getElementById('modal-monthly')?.value || '1000', 10) || 1000;
     state.categories = [{ name, monthly_spend: monthly, medianRateDecimal: 0.14 }];
   }
@@ -311,10 +413,7 @@ function main() {
     renderCategoryList(currentState);
 
     // Render immediately so the user sees the chart without having to click Render
-    const months = state.months || 36;
-    const agg = aggregateCategories(state.categories, months);
-    renderChart(months, agg.low, agg.median, agg.high);
-    renderTable(months, agg.low, agg.median, agg.high);
+    renderFromState(state);
 
     // move focus to a non-modal control before hiding to avoid aria-hidden-on-focused-element
     const monthsEl = document.getElementById('months');
@@ -342,10 +441,7 @@ function main() {
       if (!name) return;
       addCategoryToState(currentState, name, monthly);
       renderCategoryList(currentState);
-      const months = currentState.months || parseInt(document.getElementById('months')?.value || '36', 10);
-      const agg = aggregateCategories(currentState.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(currentState);
     });
   }
 
@@ -357,10 +453,7 @@ function main() {
       if (!currentState) { showModal(true); return; }
       addCategoryToState(currentState, `Category ${ (currentState.categories||[]).length + 1 }`, 1000);
       renderCategoryList(currentState);
-      const months = currentState.months || parseInt(document.getElementById('months')?.value || '36', 10);
-      const agg = aggregateCategories(currentState.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(currentState);
     });
   }
 
@@ -371,12 +464,9 @@ function main() {
       const months = parseInt(e.target.value, 10) || 36;
       let state = getStateFromUrl() || {};
       state.months = months;
-      // ensure categories exist (use modal inputs if needed)
       if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
       pushStateToUrl(state);
-      const agg = aggregateCategories(state.categories, months);
-      renderChart(months, agg.low, agg.median, agg.high);
-      renderTable(months, agg.low, agg.median, agg.high);
+      renderFromState(state);
     });
   }
 
@@ -400,25 +490,31 @@ function main() {
     });
   }
 
+  // View mode selector
+  const viewSelect = document.getElementById('view-mode');
+  if (viewSelect) {
+    viewSelect.addEventListener('change', (e) => {
+      const view = e.target.value || 'cumulative';
+      let state = getStateFromUrl() || {};
+      state.view = view;
+      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
+      pushStateToUrl(state);
+      renderFromState(state);
+    });
+  }
+
   // Render on form submit
   document.getElementById('chart-form').addEventListener('submit', (e) => {
     e.preventDefault();
     let state = getStateFromUrl() || {};
     state = collectStateFromUI(state);
     pushStateToUrl(state);
-
-    const months = state.months || 36;
-    const agg = aggregateCategories(state.categories, months);
-    renderChart(months, agg.low, agg.median, agg.high);
-    renderTable(months, agg.low, agg.median, agg.high);
+    renderFromState(state);
   });
 
   // If URL state existed, render immediately
   if (urlState) {
-    const months = urlState.months || 36;
-    const agg = aggregateCategories(urlState.categories, months);
-    renderChart(months, agg.low, agg.median, agg.high);
-    renderTable(months, agg.low, agg.median, agg.high);
+    renderFromState(urlState);
   }
 }
 
