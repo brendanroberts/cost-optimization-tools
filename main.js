@@ -5,18 +5,34 @@ let previousActiveElement = null;
 let currentState = null;
 
 // Color palette used across charts
+
+/*
+Primary data series → #12456C
+Secondary data → #2F6F9F, #4F82AB
+Contextual / historical data → #7D9BC0, #AFC2DA
+Grids / axes → #B8BDC3
+Text → #2E2E2E
+*/
+
 const PALETTE = {
-  navyblue: '#001f3f',
-  'navyblue-50': '#8ecae6',
-  'navyblue-100': '#45a29e',
-  'navyblue-200': '#34675c',
-  'navyblue-300': '#2d4f4a',
-  'navyblue-400': '#23413b',
-  'navyblue-500': '#1a3831',
-  'navyblue-600': '#152e27',
-  'navyblue-700': '#112321',
-  'navyblue-800': '#0b1914',
-  'navyblue-900': '#07100c'
+  // Light to dark blues (from index.html comment palette)
+  'navyblue-50': '#E6EDF5',
+  'navyblue-100': '#AFC2DA',
+  'navyblue-200': '#7D9BC0',
+  'navyblue-300': '#4F82AB',
+  'navyblue-400': '#2F6F9F',
+  'navyblue-500': '#1E5D8A',
+  'navyblue-600': '#12456C',
+  'navyblue-700': '#0B2F4A',
+  // neutrals for deep accents and text
+  'navyblue-800': '#4A4F55',
+  'navyblue-900': '#2E2E2E',
+  // primary (brand/nav)
+  navyblue: '#12456C',
+  // complementary accents
+  'accent-teal': '#2E8B57',
+  'accent-orange': '#E68A00',
+  'accent-yellow': '#F2C94C'
 };
 
 function hexToRgba(hex, alpha = 1) {
@@ -32,30 +48,29 @@ function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 }
 
-// Small toast helper
-function showToast(msg, timeout = 2000) {
-  const t = document.createElement('div');
-  t.className = 'fixed right-4 top-4 bg-navyblue text-white px-4 py-2 rounded shadow-lg z-60';
-  t.innerText = msg;
-  document.body.appendChild(t);
-  setTimeout(() => { try { t.remove(); } catch (e) {} }, timeout);
+// store original intro content so we can restore it after report mode
+let _origIntroHTML = null;
+
+function renderReportIntro(state) {
+  const rows = (state.categories || []).map(cat => {
+    return `<tr class="border-b"><td class="p-2">${escapeHtml(cat.name || '')}</td><td class="p-2 text-right">${formatUSD(Number(cat.monthly_spend)||0)}</td><td class="p-2 text-right">${((cat.medianRateDecimal||0)*100).toFixed(1)}%</td><td class="p-2 text-right">${Number(cat.start_month||1)}</td></tr>`;
+  }).join('\n');
+  return `<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Category</th><th class="p-2 text-right">Monthly Spend</th><th class="p-2 text-right">Rate</th><th class="p-2 text-right">Start</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderCumulativeTable(months, low, median, high) {
-  const container = document.getElementById('data-table');
+function generateCumulativeTableHTML(months, low, median, high) {
   let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th><th class="p-2 text-right">Low</th><th class="p-2 text-right">Median</th><th class="p-2 text-right">High</th></tr></thead><tbody>';
   for (let i = 0; i < months; i++) {
     html += `<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2 text-right">${formatUSD(low[i])}</td><td class="p-2 text-right">${formatUSD(median[i])}</td><td class="p-2 text-right">${formatUSD(high[i])}</td></tr>`;
   }
   html += '</tbody></table>';
-  container.innerHTML = html;
+  return html;
 }
 
-function renderMonthlyTable(months, categories) {
-  const container = document.getElementById('data-table');
+function generateMonthlyTableHTML(months, categories) {
   const catNames = categories.map(c => c.name || 'Category');
   let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th>';
-  catNames.forEach(name => { html += `<th class="p-2 text-right">${name}</th>`; });
+  catNames.forEach(name => { html += `<th class="p-2 text-right">${escapeHtml(name)}</th>`; });
   html += '<th class="p-2 text-right">Total</th></tr></thead><tbody>';
 
   for (let m = 0; m < months; m++) {
@@ -72,23 +87,62 @@ function renderMonthlyTable(months, categories) {
     html += row;
   }
   html += '</tbody></table>';
-  container.innerHTML = html;
+  return html;
 }
 
-function renderCumulativeChart(months, low, median, high) {
-  const canvas = document.getElementById('myChart');
-  // enforce fixed canvas height so re-renders don't grow the chart
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleReportMode(enabled) {
+  const body = document.body;
+  if (enabled) {
+    body.classList.add('report-mode');
+    const intro = document.getElementById('intro-text');
+    if (intro && _origIntroHTML === null) _origIntroHTML = intro.innerHTML;
+    const state = currentState || getStateFromUrl() || collectStateFromUI();
+    if (intro) intro.innerHTML = renderReportIntro(state);
+    // update table title
+    const titleEl = document.getElementById('table-title');
+    if (titleEl) titleEl.innerText = (state.view === 'monthly') ? 'Monthly Savings (Report)' : 'Cumulative Savings (Report)';
+  } else {
+    body.classList.remove('report-mode');
+    const intro = document.getElementById('intro-text');
+    if (intro && _origIntroHTML !== null) intro.innerHTML = _origIntroHTML;
+    // restore table title
+    const titleEl = document.getElementById('table-title');
+    if (titleEl) titleEl.innerText = (document.getElementById('view-mode')?.value === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
+  }
+}
+
+// Small toast helper
+function showToast(msg, timeout = 2000) {
+  const t = document.createElement('div');
+  t.className = 'fixed right-4 top-4 bg-navyblue text-white px-4 py-2 rounded shadow-lg z-60';
+  t.innerText = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { try { t.remove(); } catch (e) {} }, timeout);
+}
+
+function renderCumulativeTable(months, low, median, high) {
+  const container = document.getElementById('data-table');
+  container.innerHTML = generateCumulativeTableHTML(months, low, median, high);
+}
+
+function renderMonthlyTable(months, categories) {
+  const container = document.getElementById('data-table');
+  container.innerHTML = generateMonthlyTableHTML(months, categories);
+}
+
+function renderCumulativeChart(months, low, median, high, canvasEl = null) {
+  const canvas = canvasEl || document.getElementById('myChart');
   const FIXED_HEIGHT_PX = 420;
   canvas.style.height = FIXED_HEIGHT_PX + 'px';
-  // set the canvas height attribute too (pixel height)
   canvas.height = FIXED_HEIGHT_PX;
   const ctx = canvas.getContext('2d');
   const labels = Array.from({ length: months }, (_, i) => i + 1);
 
-  // Destroy existing chart
-  if (chartInstance) chartInstance.destroy();
-
-  // Low dataset (baseline for band)
+  // datasets
   const lowDataset = {
     label: 'Low',
     data: low,
@@ -99,7 +153,6 @@ function renderCumulativeChart(months, low, median, high) {
     tension: 0.2,
   };
 
-  // High dataset fills to previous dataset (low) creating shaded band
   const highDataset = {
     label: 'High',
     data: high,
@@ -120,12 +173,9 @@ function renderCumulativeChart(months, low, median, high) {
     tension: 0.2,
   };
 
-  chartInstance = new Chart(ctx, {
+  const cfg = {
     type: 'line',
-    data: {
-      labels,
-      datasets: [lowDataset, highDataset, medianDataset]
-    },
+    data: { labels, datasets: [lowDataset, highDataset, medianDataset] },
     options: {
       maintainAspectRatio: false,
       responsive: true,
@@ -136,18 +186,25 @@ function renderCumulativeChart(months, low, median, high) {
       plugins: { tooltip: { enabled: true } },
       interaction: { intersect: false, mode: 'index' }
     }
-  });
+  };
+
+  if (canvasEl) {
+    const tmp = new Chart(ctx, cfg);
+    return tmp;
+  }
+
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, cfg);
+  return chartInstance;
 }
 
-function renderMonthlyChart(months, categories) {
-  const canvas = document.getElementById('myChart');
+function renderMonthlyChart(months, categories, canvasEl = null) {
+  const canvas = canvasEl || document.getElementById('myChart');
   const FIXED_HEIGHT_PX = 420;
   canvas.style.height = FIXED_HEIGHT_PX + 'px';
   canvas.height = FIXED_HEIGHT_PX;
   const ctx = canvas.getContext('2d');
   const labels = Array.from({ length: months }, (_, i) => i + 1);
-
-  if (chartInstance) chartInstance.destroy();
 
   const paletteKeys = ['navyblue-50','navyblue-100','navyblue-200','navyblue-300','navyblue-400','navyblue-500','navyblue-600','navyblue-700'];
   const colors = categories.map((c, idx) => PALETTE[paletteKeys[idx % paletteKeys.length]] || PALETTE.navyblue);
@@ -164,7 +221,7 @@ function renderMonthlyChart(months, categories) {
     };
   });
 
-  chartInstance = new Chart(ctx, {
+  const cfg = {
     type: 'bar',
     data: { labels, datasets },
     options: {
@@ -176,7 +233,16 @@ function renderMonthlyChart(months, categories) {
       },
       plugins: { tooltip: { enabled: true } }
     }
-  });
+  };
+
+  if (canvasEl) {
+    const tmp = new Chart(ctx, cfg);
+    return tmp;
+  }
+
+  if (chartInstance) chartInstance.destroy();
+  chartInstance = new Chart(ctx, cfg);
+  return chartInstance;
 }
 
 function renderFromState(state) {
@@ -282,7 +348,12 @@ function renderCategoryList(state) {
     const leftCol = document.createElement('div');
     leftCol.className = 'flex-1';
 
+    const nameLabel = document.createElement('label');
+    nameLabel.className = 'block text-sm font-medium text-white';
+    nameLabel.innerText = 'Category';
+
     const nameInput = document.createElement('input');
+    nameInput.id = `cat-name-${idx}`;
     nameInput.value = cat.name;
     nameInput.className = 'w-full p-2 rounded text-black text-sm';
     nameInput.addEventListener('change', (e) => {
@@ -296,10 +367,17 @@ function renderCategoryList(state) {
       renderFromState(state);
     });
 
+    
+    // Start month input
     const bottomRow = document.createElement('div');
-    bottomRow.className = 'mt-2';
+    bottomRow.className = 'mt-6';
+
+    const spendLabel = document.createElement('label');
+    spendLabel.className = 'block text-sm font-medium text-white';
+    spendLabel.innerText = 'Monthly spend (USD)';
 
     const spendInput = document.createElement('input');
+    spendInput.id = `cat-spend-${idx}`;
     spendInput.type = 'text';
     spendInput.value = (typeof cat.monthly_spend === 'number') ? String(cat.monthly_spend) : (cat.monthly_spend ?? '');
     spendInput.placeholder = 'Monthly spend';
@@ -313,16 +391,25 @@ function renderCategoryList(state) {
       renderFromState(state);
     });
 
-    bottomRow.appendChild(spendInput);
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'mt-2';
+    inputContainer.appendChild(spendInput);
+    
+    bottomRow.appendChild(spendLabel);
+    bottomRow.appendChild(inputContainer);
+
+
+
     // Start month input
     const startRow = document.createElement('div');
-    startRow.className = 'mt-2 flex items-center gap-2';
+    startRow.className = 'mt-6';
 
-    const startLabel = document.createElement('span');
-    startLabel.className = 'text-xs text-gray-700';
-    startLabel.innerText = 'Start';
+    const startLabel = document.createElement('label');
+    startLabel.className = 'block text-sm font-medium text-white';
+    startLabel.innerText = 'Start month';
 
     const startInput = document.createElement('input');
+    startInput.id = `cat-start-${idx}`;
     startInput.type = 'number';
     startInput.min = 1;
     startInput.value = cat.start_month || 1;
@@ -335,19 +422,28 @@ function renderCategoryList(state) {
       renderFromState(state);
     });
 
+    const startMonthContainer = document.createElement('div');
+    startMonthContainer.className = 'mt-2';
+    startMonthContainer.appendChild(startInput);
+
     startRow.appendChild(startLabel);
-    startRow.appendChild(startInput);
+    startRow.appendChild(startMonthContainer);
     bottomRow.appendChild(startRow);
+    
+
+
     // Rate input (percent) per category — text input with trailing % indicator
     const rateRow = document.createElement('div');
-    rateRow.className = 'mt-2 flex items-center gap-2 text-sm';
+    rateRow.className = 'mt-6';
 
-    const rateWrapper = document.createElement('div');
-    rateWrapper.className = 'relative w-24';
+    const rateLabel = document.createElement('label');
+    rateLabel.className = 'block text-sm font-medium text-white';
+    rateLabel.innerText = 'Savings rate (%)';
 
     const rateInput = document.createElement('input');
+    rateInput.id = `cat-rate-${idx}`;
     rateInput.type = 'text';
-    const percent = ((cat.medianRateDecimal ?? 0.14) * 100).toFixed(1);
+    const percent = ((cat.medianRateDecimal ?? 0.14) * 100).toFixed(0);
     rateInput.value = percent;
     rateInput.setAttribute('aria-label', 'Savings rate percent');
     rateInput.className = 'w-full pr-8 p-2 rounded text-sm text-black';
@@ -360,16 +456,22 @@ function renderCategoryList(state) {
       renderFromState(state);
     });
 
-    const percentSpan = document.createElement('span');
-    percentSpan.className = 'absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-700 pointer-events-none';
-    percentSpan.innerText = '%';
 
-    rateWrapper.appendChild(rateInput);
-    rateWrapper.appendChild(percentSpan);
-    rateRow.appendChild(rateWrapper);
+    const rateContainer = document.createElement('div');
+    rateContainer.className = 'mt-2';
+    rateContainer.appendChild(rateInput);
+
+    rateRow.appendChild(rateLabel);
+    rateRow.appendChild(rateContainer);
     bottomRow.appendChild(rateRow);
 
-    leftCol.appendChild(nameInput);
+    
+    const nameContainer = document.createElement('div');
+    nameContainer.className = 'mt-2';
+    nameContainer.appendChild(nameInput);
+    
+    leftCol.appendChild(nameLabel);
+    leftCol.appendChild(nameContainer);
     leftCol.appendChild(bottomRow);
 
     const removeBtn = document.createElement('button');
@@ -391,13 +493,21 @@ function renderCategoryList(state) {
     container.appendChild(leftCol);
     container.appendChild(removeBtn);
     row.appendChild(container);
+
+
+    if (state.categories.length > 1 && idx < state.categories.length - 1) {
+      const hr = document.createElement('hr');
+      hr.className = 'my-4 border-gray-400';
+      row.appendChild(hr);
+    }
+
     list.appendChild(row);
   });
 }
 
 function addCategoryToState(state, name = 'New Category', monthly = 1000) {
   state.categories = state.categories || [];
-  state.categories.push({ name, monthly_spend: monthly, medianRateDecimal: 0.14 });
+  state.categories.unshift({ name, monthly_spend: monthly, medianRateDecimal: 0.14 });
   pushStateToUrl(state);
 }
 
@@ -555,6 +665,105 @@ function main() {
       if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
       pushStateToUrl(state);
       renderFromState(state);
+    });
+  }
+
+  // Report button: toggle printable report view
+  const reportBtn = document.getElementById('report-btn');
+  const printBtn = document.getElementById('print-btn');
+  if (reportBtn) {
+    reportBtn.addEventListener('click', () => {
+      const isOn = document.body.classList.contains('report-mode');
+      toggleReportMode(!isOn);
+    });
+  }
+  if (printBtn) {
+    printBtn.addEventListener('click', () => {
+      // ensure report mode is on when printing
+      if (!document.body.classList.contains('report-mode')) toggleReportMode(true);
+      setTimeout(() => window.print(), 50);
+    });
+  }
+
+  // Export PDF handler using html2pdf
+  const exportBtn = document.getElementById('export-pdf-btn');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      // Build an off-screen report to avoid toggling visible UI (no bounce)
+      const state = currentState || getStateFromUrl() || collectStateFromUI();
+      const months = state.months || 36;
+      ensureAtLeastOneCategory(state);
+
+      // create offscreen container
+      const off = document.createElement('div');
+      off.style.position = 'absolute';
+      off.style.left = '-9999px';
+      off.style.top = '0';
+      off.id = 'offscreen-report';
+
+      // header / intro
+      const header = document.createElement('div');
+      header.innerHTML = `<h1 style="font-size:20px;margin-bottom:8px;">Savings Report</h1>` + renderReportIntro(state);
+      off.appendChild(header);
+
+      // create canvases and render charts offscreen
+      const cumCanvas = document.createElement('canvas');
+      cumCanvas.width = 800; cumCanvas.height = 420;
+      off.appendChild(cumCanvas);
+
+      const monCanvas = document.createElement('canvas');
+      monCanvas.width = 800; monCanvas.height = 420;
+      off.appendChild(monCanvas);
+
+      // compute cumulative datasets
+      const agg = aggregateCategories(state.categories || [], months);
+
+      // render charts to offscreen canvases
+      const cumChart = renderCumulativeChart(months, agg.low, agg.median, agg.high, cumCanvas);
+      const monChart = renderMonthlyChart(months, state.categories || [], monCanvas);
+
+      // wait briefly for canvases to render
+      await new Promise(r => setTimeout(r, 120));
+
+      // capture images
+      const cumDataUrl = cumCanvas.toDataURL('image/jpeg', 0.98);
+      const monDataUrl = monCanvas.toDataURL('image/jpeg', 0.98);
+
+      // destroy temporary charts
+      try { if (cumChart && typeof cumChart.destroy === 'function') cumChart.destroy(); } catch (e) {}
+      try { if (monChart && typeof monChart.destroy === 'function') monChart.destroy(); } catch (e) {}
+
+      // append images into offscreen HTML
+      const cumImg = document.createElement('img'); cumImg.src = cumDataUrl; cumImg.style.width = '100%'; cumImg.style.margin = '12px 0';
+      const monImg = document.createElement('img'); monImg.src = monDataUrl; monImg.style.width = '100%'; monImg.style.margin = '12px 0';
+      off.appendChild(cumImg);
+      off.appendChild(monImg);
+
+      // append tables (use generators)
+      const tablesWrapper = document.createElement('div');
+      tablesWrapper.innerHTML = `<h2 style="font-size:16px;margin-top:8px;">Cumulative</h2>` + generateCumulativeTableHTML(months, agg.low, agg.median, agg.high) + `<h2 style="font-size:16px;margin-top:8px;">Monthly</h2>` + generateMonthlyTableHTML(months, state.categories || []);
+      off.appendChild(tablesWrapper);
+
+      document.body.appendChild(off);
+
+      const opt = {
+        margin: 0.4,
+        filename: 'savings-report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      try {
+        await html2pdf().set(opt).from(off).save();
+        showToast('PDF generated');
+      } catch (err) {
+        console.error('PDF export failed', err);
+        showToast('PDF export failed');
+      } finally {
+        // cleanup
+        try { off.remove(); } catch (e) {}
+      }
     });
   }
 

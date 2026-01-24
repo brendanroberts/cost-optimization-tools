@@ -5,28 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cost optimization - potential scenarios</title>
     <meta name="author" content="Brendan Roberts">
-    <meta name="description" content="">
+    <meta name="description" content="Cost optimization insight calculator designed for accountants, controllers, and CFOs. It is intentionally neutral, conservative, and exploratory.">
 
-    <!-- Tailwind -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+<!-- 
+        /* Primary Blues */
+        #12456C
+        #7D9BC0
+
+        /* Dark Blues */
+        #0B2F4A
+        #1E5D8A
+
+        /* Mid Blues */
+        #2F6F9F
+        #4F82AB
+
+        /* Light Blues */
+        #AFC2DA
+        #E6EDF5
+
+        /* Dark Greys */
+        #2E2E2E
+        #4A4F55
+
+        /* Mid Greys */
+        #7A8087
+        #B8BDC3
+
+        /* Light Greys */
+        #E4E6E8
+        #F6F7F9
     
-    <style>
+-->
+<style>
         @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
         .font-family-karla { font-family: "Libre Franklin", sans-serif; }
-        .bg-navyblue { background: #001f3f; }
-        .bg-blue-500 { background: #1a3831; }
-        .bg-blue-700 { background: #112321; }
-        .cta-btn { color: #001f3f; }
-        .active-nav-link { background: #07100c; }
-        .nav-item:hover { background: #07100c; }
-        .account-link:hover { background: #07100c; }
+        .bg-blue-500 { background: #1E5D8A; }
+        .bg-blue-600 { background: #12456C; }
+        .bg-blue-700 { background: #0B2F4A; }
+        .bg-grey-100 { background: #F6F7F9; }
+        .bg-grey-200 { background: #E4E6E8; }
+        .bg-grey-300 { background: #B8BDC3; }
+        .bg-grey-400 { background: #7A8087; }
+        .bg-grey-500 { background: #4A4F55; }
+        .bg-grey-600 { background: #2E2E2E; }
+        .cta-btn { color: #12456C; }
+        .active-nav-link { background: #0B2F4A; }
+        .nav-item:hover { background: #0B2F4A; }
+        .account-link:hover { background: #0B2F4A; }
+        /* report-mode styles */
+        .report-mode aside { display: none; }
+        .report-mode #chart-form, .report-mode .no-print { display: none !important; }
+        .report-mode #print-btn { display: inline-block !important; }
     </style>
 </head>
 <body class="bg-gray-100 font-family-karla flex">
-    <aside class="relative bg-navyblue h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
+    <aside class="relative bg-grey-500 h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
         <div class="p-6 text-white">
-            <h3 class="text-lg font-semibold mb-3">Categories</h3>
-            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
+            <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
+            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-12 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
                 <i class="fas fa-plus mr-3"></i> Add Category
             </button>
             <div id="categories-list" class="space-y-3 mt-4" style="max-height: calc(100vh - 220px); overflow:auto;">
@@ -41,9 +80,9 @@
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
                 <h1 class="text-3xl text-black pb-6">Cost optimization - potential scenarios</h1>
-                <p class="mb-4 text-sm text-gray-700">Savings estimations for optimized vendor expenses. <br> 
-                    By default, the savings rate is 14% with a ±10% shaded range indicating fudge factor. <br>
-                    <i>Example: what if we improved our monthly telecom spend by 14% give or take?</i></p>
+                <p id="intro-text" class="mb-4 text-sm text-gray-700 italic">Savings estimations for optimized vendor expenses. How much cash flow can you free up?</p> 
+                <p class="text-sm text-gray-700">
+                    The cumulative savings rate includes a ±10% shaded range indicating fudge factor. </p>
 
                 <div class="flex flex-wrap mt-6">
                     <div class="w-full pr-0 lg:pr-2">
@@ -68,25 +107,31 @@
                                 </div>
                                 
                                 <div class="flex-1 text-right flex items-center justify-end gap-2">
-                                    <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm">Reset</button>
-                                    <button type="button" id="bookmark-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm">Bookmark</button>
+                                    <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Reset</button>
+                                    <button type="button" id="bookmark-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Bookmark</button>
+                                    <button type="button" id="report-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Report</button>
+                                    <button type="button" id="print-btn" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm ">Print</button>
+                                    <button type="button" id="export-pdf-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Export PDF</button>
                                 </div>
                             </form>
                         </p>
                         <div class="p-6 bg-white">
-                            <canvas id="myChart" class="w-full" style="height:420px"></canvas>
+                                    <canvas id="myChart" class="w-full" style="height:420px"></canvas>
                         </div>
                     </div>        
                 </div>
     
             
-                <!-- schedule table -->
-                <div class="w-full mt-12">
-                    <p id="table-title" class="text-xl pb-3 flex items-center">
-                        Cumulative Savings
-                    </p>
-                    <div id="data-table" class="bg-white overflow-auto"></div>
-                </div>
+                        <!-- report area (wrapped for printable/pdf export) -->
+                        <div id="report-area">
+                        <!-- schedule table -->
+                        <div class="w-full mt-12">
+                            <p id="table-title" class="text-xl pb-3 flex items-center">
+                                Cumulative Savings
+                            </p>
+                            <div id="data-table" class="bg-white overflow-auto"></div>
+                        </div>
+                        </div>
             </main>
     
         </div>
@@ -95,14 +140,14 @@
     
     <!-- Initial modal: appears on first load unless URL state present -->
     <div id="initial-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
-        <div id="modal-backdrop" class="absolute inset-0 bg-black/60"></div>
+        <div id="modal-backdrop" class="absolute inset-0 bg-grey-400 opacity-60"></div>
         <div class="relative flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg" role="dialog" aria-modal="true" aria-labelledby="modal-title">
                 <div class="flex items-start justify-between">
                     <h3 id="modal-title" class="text-lg font-bold mb-2">Get started</h3>
                     <button id="modal-close" aria-label="Close" class="text-gray-500 hover:text-gray-700">✕</button>
                 </div>
-                <p class="mb-4 text-sm text-gray-700">Enter at least one category and monthly spend.</p>
+                <p class="mb-4 text-sm text-gray-700">Enter one expense category and monthly spend.</p>
                 <form id="modal-form" class="space-y-3">
                     <div>
                         <label class="block text-sm font-medium">Category name</label>
@@ -123,6 +168,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
     <script type="module" src="./main.js"></script>
     
 </body>
