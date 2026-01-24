@@ -3,22 +3,26 @@ export function computeCategoryCumulative(monthlySpend, medianRateDecimal, month
   const lowRate = medianRateDecimal * 0.9;
   const highRate = medianRateDecimal * 1.1;
 
-  let totalLow = 0;
-  let totalMedian = 0;
-  let totalHigh = 0;
+  // ensure numeric monthlySpend
+  const monthly = Number(monthlySpend) || 0;
+
+  let cumulativeLow = 0;
+  let cumulativeMedian = 0;
+  let cumulativeHigh = 0;
 
   const low = [];
   const median = [];
   const high = [];
 
+  // Each month, savings = monthly * rate; cumulative adds the monthly savings (no compounding)
   for (let i = 0; i < months; i++) {
-    totalLow += monthlySpend * lowRate + (totalLow * lowRate);
-    totalMedian += monthlySpend * medianRateDecimal + (totalMedian * medianRateDecimal);
-    totalHigh += monthlySpend * highRate + (totalHigh * highRate);
+    cumulativeLow += monthly * lowRate;
+    cumulativeMedian += monthly * medianRateDecimal;
+    cumulativeHigh += monthly * highRate;
 
-    low.push(Math.round(totalLow));
-    median.push(Math.round(totalMedian));
-    high.push(Math.round(totalHigh));
+    low.push(Math.round(cumulativeLow));
+    median.push(Math.round(cumulativeMedian));
+    high.push(Math.round(cumulativeHigh));
   }
 
   return { low, median, high };
