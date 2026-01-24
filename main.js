@@ -105,11 +105,17 @@ function showModal(show) {
     // add keydown listener for Escape
     document.addEventListener('keydown', handleModalKeydown);
   } else {
+    // move focus away from any element inside the modal before hiding it
+    if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
+      try { previousActiveElement.focus(); } catch (e) { /* ignore */ }
+    } else {
+      const fallback = document.getElementById('months') || document.body;
+      if (fallback && typeof fallback.focus === 'function') try { fallback.focus(); } catch (e) {}
+    }
+
     m.classList.add('hidden');
     m.setAttribute('aria-hidden', 'true');
     document.removeEventListener('keydown', handleModalKeydown);
-    // restore focus
-    if (previousActiveElement && previousActiveElement.focus) previousActiveElement.focus();
     previousActiveElement = null;
   }
 }
@@ -158,6 +164,17 @@ function main() {
   document.getElementById('modal-start').addEventListener('click', () => {
     const state = collectStateFromUI();
     pushStateToUrl(state);
+
+    // Render immediately so the user sees the chart without having to click Render
+    const months = state.months || 36;
+    const agg = aggregateCategories(state.categories, months);
+    renderChart(months, agg.low, agg.median, agg.high);
+    renderTable(months, agg.low, agg.median, agg.high);
+
+    // move focus to a non-modal control before hiding to avoid aria-hidden-on-focused-element
+    const monthsEl = document.getElementById('months');
+    if (monthsEl && typeof monthsEl.focus === 'function') monthsEl.focus();
+
     showModal(false);
   });
 

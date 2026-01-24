@@ -83,10 +83,10 @@
     </div>
     
     <!-- Initial modal: appears on first load unless URL state present -->
-    <div id="initial-modal" aria-hidden="true" style="display:none; position:fixed; inset:0; z-index:9999;">
-        <div id="modal-backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.55);"></div>
-        <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:clamp(320px, 90%, 720px); z-index:10000;">
-            <div class="bg-white rounded-lg p-6 shadow-lg" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="initial-modal" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div id="modal-backdrop" class="absolute inset-0 bg-black/60"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg" role="dialog" aria-modal="true" aria-labelledby="modal-title">
                 <div class="flex items-start justify-between">
                     <h3 id="modal-title" class="text-lg font-bold mb-2">Get started</h3>
                     <button id="modal-close" aria-label="Close" class="text-gray-500 hover:text-gray-700">✕</button>
