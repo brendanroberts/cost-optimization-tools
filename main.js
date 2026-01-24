@@ -2,6 +2,7 @@ import { aggregateCategories } from './calculations.js';
 
 let chartInstance = null;
 let previousActiveElement = null;
+let currentState = null;
 
 function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
@@ -99,6 +100,8 @@ function pushStateToUrl(state) {
   url.searchParams.set('state', s);
   // push a new history entry so back/forward navigates between states
   window.history.pushState({}, '', url.toString());
+  // keep an in-memory copy of the current state for UI rendering
+  currentState = state;
 }
 
 function clearChart() {
@@ -150,6 +153,87 @@ function ensureAtLeastOneCategory(state) {
   }
 }
 
+function renderCategoryList(state) {
+  const list = document.getElementById('categories-list');
+  if (!list) return;
+  ensureAtLeastOneCategory(state);
+  list.innerHTML = '';
+  state.categories.forEach((cat, idx) => {
+    const row = document.createElement('div');
+    row.className = 'p-2 rounded';
+
+    // container with left column (name + amount) and right column (remove button)
+    const container = document.createElement('div');
+    container.className = 'flex items-start gap-2';
+
+    const leftCol = document.createElement('div');
+    leftCol.className = 'flex-1';
+
+    const nameInput = document.createElement('input');
+    nameInput.value = cat.name;
+    nameInput.className = 'w-full p-2 rounded text-black text-sm';
+    nameInput.addEventListener('change', (e) => {
+      cat.name = e.target.value || 'Category';
+      pushStateToUrl(state);
+    });
+
+    const bottomRow = document.createElement('div');
+    bottomRow.className = 'mt-2';
+
+    const spendInput = document.createElement('input');
+    spendInput.type = 'text';
+    spendInput.value = (typeof cat.monthly_spend === 'number') ? String(cat.monthly_spend) : (cat.monthly_spend ?? '');
+    spendInput.placeholder = 'Monthly spend';
+    spendInput.className = 'w-full p-2 rounded text-sm text-black';
+    spendInput.addEventListener('input', (e) => {
+      const raw = e.target.value || '';
+      const cleaned = raw.replace(/[^0-9-]/g, '');
+      const v = parseInt(cleaned || '0', 10) || 0;
+      cat.monthly_spend = v;
+      pushStateToUrl(state);
+      const months = state.months || parseInt(document.getElementById('months')?.value || '36', 10);
+      const agg = aggregateCategories(state.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+
+    bottomRow.appendChild(spendInput);
+
+    leftCol.appendChild(nameInput);
+    leftCol.appendChild(bottomRow);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'text-sm text-white bg-navyblue px-2 py-1 rounded';
+    removeBtn.innerText = '✕';
+    removeBtn.title = 'Remove category';
+    removeBtn.addEventListener('click', () => {
+      if ((state.categories || []).length <= 1) {
+        alert('At least one category is required');
+        return;
+      }
+      state.categories.splice(idx, 1);
+      pushStateToUrl(state);
+      renderCategoryList(state);
+      const months = state.months || 36;
+      const agg = aggregateCategories(state.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+
+    container.appendChild(leftCol);
+    container.appendChild(removeBtn);
+    row.appendChild(container);
+    list.appendChild(row);
+  });
+}
+
+function addCategoryToState(state, name = 'New Category', monthly = 1000) {
+  state.categories = state.categories || [];
+  state.categories.push({ name, monthly_spend: monthly, medianRateDecimal: 0.14 });
+  pushStateToUrl(state);
+}
+
 function loadFromState(state) {
   ensureAtLeastOneCategory(state);
   document.getElementById('months').value = state.months || 36;
@@ -169,12 +253,17 @@ function collectStateFromUI(existingState) {
 }
 
 function main() {
-  // Handle URL state
+  // Handle URL state and initialize currentState so sidebar renders immediately
   const urlState = getStateFromUrl();
   if (urlState) {
-    loadFromState(urlState);
+    currentState = urlState;
+    loadFromState(currentState);
     showModal(false);
+    // render sidebar categories from state
+    renderCategoryList(currentState);
   } else {
+    // do not render categories yet — wait for user to complete the initial modal
+    currentState = null;
     showModal(true);
   }
 
@@ -182,6 +271,10 @@ function main() {
   document.getElementById('modal-start').addEventListener('click', () => {
     const state = collectStateFromUI();
     pushStateToUrl(state);
+
+    // update in-memory state and sidebar
+    currentState = state;
+    renderCategoryList(currentState);
 
     // Render immediately so the user sees the chart without having to click Render
     const months = state.months || 36;
@@ -205,16 +298,37 @@ function main() {
   if (modalBackdrop) modalBackdrop.addEventListener('click', () => showModal(false));
 
   // Add category: open a quick prompt (keeps implementation light)
-  document.getElementById('add-category').addEventListener('click', () => {
-    const name = prompt('Category name', 'New Category');
-    const monthly = parseInt(prompt('Monthly spend (whole dollars)', '1000') || '1000', 10);
-    if (!name) return;
-    const state = getStateFromUrl() || {};
-    state.categories = state.categories || [];
-    state.categories.push({ name, monthly_spend: monthly, medianRateDecimal: 0.14 });
-    pushStateToUrl(state);
-    alert('Category added — click Render Chart to update.');
-  });
+  const addCatBtn = document.getElementById('add-category');
+  if (addCatBtn) {
+    addCatBtn.addEventListener('click', () => {
+      // require initial modal/state first
+      if (!currentState) { showModal(true); return; }
+      const name = prompt('Category name', 'New Category');
+      const monthly = parseInt(prompt('Monthly spend (whole dollars)', '1000') || '1000', 10);
+      if (!name) return;
+      addCategoryToState(currentState, name, monthly);
+      renderCategoryList(currentState);
+      const months = currentState.months || parseInt(document.getElementById('months')?.value || '36', 10);
+      const agg = aggregateCategories(currentState.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+  }
+
+  // Add category from aside (left rail)
+  const asideAdd = document.getElementById('aside-add-category');
+  if (asideAdd) {
+    asideAdd.addEventListener('click', () => {
+      // Ensure initial modal/state has been completed first
+      if (!currentState) { showModal(true); return; }
+      addCategoryToState(currentState, `Category ${ (currentState.categories||[]).length + 1 }`, 1000);
+      renderCategoryList(currentState);
+      const months = currentState.months || parseInt(document.getElementById('months')?.value || '36', 10);
+      const agg = aggregateCategories(currentState.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+  }
 
   // Immediate render when months selector changes
   const monthsSelect = document.getElementById('months');
@@ -244,6 +358,10 @@ function main() {
       // reset months control to default
       const monthsEl = document.getElementById('months');
       if (monthsEl) monthsEl.value = 36;
+      // clear categories list UI as well
+      const list = document.getElementById('categories-list');
+      if (list) list.innerHTML = '';
+      currentState = null;
       showModal(true);
     });
   }

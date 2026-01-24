@@ -24,13 +24,17 @@
 </head>
 <body class="bg-gray-100 font-family-karla flex">
     <aside class="relative bg-navyblue h-screen w-64 hidden sm:block shadow-xl">
-        <div class="p-6">
-            <button class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center">
+        <div class="p-6 text-white">
+            <h3 class="text-lg font-semibold mb-3">Categories</h3>
+            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
                 <i class="fas fa-plus mr-3"></i> Add Category
             </button>
+            <div id="categories-list" class="space-y-3 mt-4">
+                <!-- category rows rendered here -->
+            </div>
         </div>
         
-        <!-- place additional category forms here -->
+        <!-- category controls rendered into #categories-list -->
     </aside>
 
     <div class="w-full flex flex-col h-screen overflow-y-hidden">
