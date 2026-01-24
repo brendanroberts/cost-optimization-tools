@@ -53,15 +53,15 @@ let _origIntroHTML = null;
 
 function renderReportIntro(state) {
   const rows = (state.categories || []).map(cat => {
-    return `<tr class="border-b"><td class="p-2">${escapeHtml(cat.name || '')}</td><td class="p-2 text-right">${formatUSD(Number(cat.monthly_spend)||0)}</td><td class="p-2 text-right">${((cat.medianRateDecimal||0)*100).toFixed(1)}%</td><td class="p-2 text-right">${Number(cat.start_month||1)}</td></tr>`;
+    return `<tr class=""><td class="p-2 text-left">${escapeHtml(cat.name || '')}</td><td class="p-2 text-right">${formatUSD(Number(cat.monthly_spend)||0)}</td><td class="p-2 text-right">${((cat.medianRateDecimal||0)*100).toFixed(1)}%</td><td class="p-2 text-right">${Number(cat.start_month||1)}</td></tr>`;
   }).join('\n');
-  return `<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Category</th><th class="p-2 text-right">Monthly Spend</th><th class="p-2 text-right">Rate</th><th class="p-2 text-right">Start</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table class="min-w-full bg-white text-sm"><tr class=""><th class="p-2 text-left">Category</th><th class="p-2 text-right">Monthly Spend</th><th class="p-2 text-right">Savings Rate</th><th class="p-2 text-right">Starting Month</th></tr>${rows}</table>`;
 }
 
 function generateCumulativeTableHTML(months, low, median, high) {
-  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th><th class="p-2 text-right">Low</th><th class="p-2 text-right">Median</th><th class="p-2 text-right">High</th></tr></thead><tbody>';
+  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-right">Month</th><th class="p-2 text-right">Low</th><th class="p-2 text-right">Median</th><th class="p-2 text-right">High</th></tr></thead><tbody>';
   for (let i = 0; i < months; i++) {
-    html += `<tr class="border-b"><td class="p-2">${i+1}</td><td class="p-2 text-right">${formatUSD(low[i])}</td><td class="p-2 text-right">${formatUSD(median[i])}</td><td class="p-2 text-right">${formatUSD(high[i])}</td></tr>`;
+    html += `<tr class="border-b"><td class="p-2 text-right">${i+1}</td><td class="p-2 text-right">${formatUSD(low[i])}</td><td class="p-2 text-right">${formatUSD(median[i])}</td><td class="p-2 text-right">${formatUSD(high[i])}</td></tr>`;
   }
   html += '</tbody></table>';
   return html;
@@ -69,12 +69,12 @@ function generateCumulativeTableHTML(months, low, median, high) {
 
 function generateMonthlyTableHTML(months, categories) {
   const catNames = categories.map(c => c.name || 'Category');
-  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th>';
+  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-right">Month</th>';
   catNames.forEach(name => { html += `<th class="p-2 text-right">${escapeHtml(name)}</th>`; });
   html += '<th class="p-2 text-right">Total</th></tr></thead><tbody>';
 
   for (let m = 0; m < months; m++) {
-    let row = `<tr class="border-b"><td class="p-2">${m+1}</td>`;
+    let row = `<tr class="border-b"><td class="p-2 text-right">${m+1}</td>`;
     let total = 0;
     categories.forEach(cat => {
       const monthly = Number(cat.monthly_spend) || 0;
@@ -94,31 +94,31 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function toggleReportMode(enabled) {
-  const body = document.body;
-  if (enabled) {
-    body.classList.add('report-mode');
-    const intro = document.getElementById('intro-text');
-    if (intro && _origIntroHTML === null) _origIntroHTML = intro.innerHTML;
-    const state = currentState || getStateFromUrl() || collectStateFromUI();
-    if (intro) intro.innerHTML = renderReportIntro(state);
-    // update table title
-    const titleEl = document.getElementById('table-title');
-    if (titleEl) titleEl.innerText = (state.view === 'monthly') ? 'Monthly Savings (Report)' : 'Cumulative Savings (Report)';
-  } else {
-    body.classList.remove('report-mode');
-    const intro = document.getElementById('intro-text');
-    if (intro && _origIntroHTML !== null) intro.innerHTML = _origIntroHTML;
-    // restore table title
-    const titleEl = document.getElementById('table-title');
-    if (titleEl) titleEl.innerText = (document.getElementById('view-mode')?.value === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
-  }
-}
+// function toggleReportMode(enabled) {
+//   const body = document.body;
+//   if (enabled) {
+//     body.classList.add('report-mode');
+//     const intro = document.getElementById('intro-text');
+//     if (intro && _origIntroHTML === null) _origIntroHTML = intro.innerHTML;
+//     const state = currentState || getStateFromUrl() || collectStateFromUI();
+//     if (intro) intro.innerHTML = renderReportIntro(state);
+//     // update table title
+//     const titleEl = document.getElementById('table-title');
+//     if (titleEl) titleEl.innerText = (state.view === 'monthly') ? 'Monthly Savings (Report)' : 'Cumulative Savings (Report)';
+//   } else {
+//     body.classList.remove('report-mode');
+//     const intro = document.getElementById('intro-text');
+//     if (intro && _origIntroHTML !== null) intro.innerHTML = _origIntroHTML;
+//     // restore table title
+//     const titleEl = document.getElementById('table-title');
+//     if (titleEl) titleEl.innerText = (document.getElementById('view-mode')?.value === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
+//   }
+// }
 
 // Small toast helper
 function showToast(msg, timeout = 2000) {
   const t = document.createElement('div');
-  t.className = 'fixed right-4 top-4 bg-navyblue text-white px-4 py-2 rounded shadow-lg z-60';
+  t.className = 'fixed right-4 top-4 bg-grey-500 text-white px-4 py-2 rounded shadow-lg z-60';
   t.innerText = msg;
   document.body.appendChild(t);
   setTimeout(() => { try { t.remove(); } catch (e) {} }, timeout);
@@ -669,101 +669,119 @@ function main() {
   }
 
   // Report button: toggle printable report view
-  const reportBtn = document.getElementById('report-btn');
-  const printBtn = document.getElementById('print-btn');
-  if (reportBtn) {
-    reportBtn.addEventListener('click', () => {
-      const isOn = document.body.classList.contains('report-mode');
-      toggleReportMode(!isOn);
-    });
-  }
-  if (printBtn) {
-    printBtn.addEventListener('click', () => {
-      // ensure report mode is on when printing
-      if (!document.body.classList.contains('report-mode')) toggleReportMode(true);
-      setTimeout(() => window.print(), 50);
-    });
-  }
+  // const reportBtn = document.getElementById('report-btn');
+  // const printBtn = document.getElementById('print-btn');
+  // if (reportBtn) {
+  //   reportBtn.addEventListener('click', () => {
+  //     const isOn = document.body.classList.contains('report-mode');
+  //     toggleReportMode(!isOn);
+  //   });
+  // }
+  // if (printBtn) {
+  //   printBtn.addEventListener('click', () => {
+  //     // ensure report mode is on when printing
+  //     if (!document.body.classList.contains('report-mode')) toggleReportMode(true);
+  //     setTimeout(() => window.print(), 50);
+  //   });
+  // }
 
   // Export PDF handler using html2pdf
   const exportBtn = document.getElementById('export-pdf-btn');
   if (exportBtn) {
     exportBtn.addEventListener('click', async () => {
-      // Build an off-screen report to avoid toggling visible UI (no bounce)
       const state = currentState || getStateFromUrl() || collectStateFromUI();
       const months = state.months || 36;
       ensureAtLeastOneCategory(state);
 
-      // create offscreen container
-      const off = document.createElement('div');
-      off.style.position = 'absolute';
-      off.style.left = '-9999px';
-      off.style.top = '0';
-      off.id = 'offscreen-report';
-
-      // header / intro
-      const header = document.createElement('div');
-      header.innerHTML = `<h1 style="font-size:20px;margin-bottom:8px;">Savings Report</h1>` + renderReportIntro(state);
-      off.appendChild(header);
-
-      // create canvases and render charts offscreen
-      const cumCanvas = document.createElement('canvas');
-      cumCanvas.width = 800; cumCanvas.height = 420;
-      off.appendChild(cumCanvas);
-
-      const monCanvas = document.createElement('canvas');
-      monCanvas.width = 800; monCanvas.height = 420;
-      off.appendChild(monCanvas);
-
       // compute cumulative datasets
       const agg = aggregateCategories(state.categories || [], months);
 
-      // render charts to offscreen canvases
+      // render temporary canvases in the current window and capture images
+      const cumCanvas = document.createElement('canvas');
+      cumCanvas.width = 1100; cumCanvas.height = 220;
+      cumCanvas.style.position = 'absolute'; cumCanvas.style.left = '-9999px'; cumCanvas.style.top = '0';
+      const monCanvas = document.createElement('canvas');
+      monCanvas.width = 1100; monCanvas.height = 220;
+      monCanvas.style.position = 'absolute'; monCanvas.style.left = '-9999px'; monCanvas.style.top = '0';
+
+      // attach to DOM so Chart.js can render reliably
+      document.body.appendChild(cumCanvas);
+      document.body.appendChild(monCanvas);
+
       const cumChart = renderCumulativeChart(months, agg.low, agg.median, agg.high, cumCanvas);
       const monChart = renderMonthlyChart(months, state.categories || [], monCanvas);
 
-      // wait briefly for canvases to render
-      await new Promise(r => setTimeout(r, 120));
+      // allow render
+      await new Promise(r => setTimeout(r, 250));
 
-      // capture images
-      const cumDataUrl = cumCanvas.toDataURL('image/jpeg', 0.98);
-      const monDataUrl = monCanvas.toDataURL('image/jpeg', 0.98);
+      const cumDataUrl = cumCanvas.toDataURL('image/png', 0.98);
+      const monDataUrl = monCanvas.toDataURL('image/png', 0.98);
 
-      // destroy temporary charts
+      // destroy temp charts and remove canvases
       try { if (cumChart && typeof cumChart.destroy === 'function') cumChart.destroy(); } catch (e) {}
       try { if (monChart && typeof monChart.destroy === 'function') monChart.destroy(); } catch (e) {}
+      try { cumCanvas.remove(); } catch (e) {}
+      try { monCanvas.remove(); } catch (e) {}
 
-      // append images into offscreen HTML
-      const cumImg = document.createElement('img'); cumImg.src = cumDataUrl; cumImg.style.width = '100%'; cumImg.style.margin = '12px 0';
-      const monImg = document.createElement('img'); monImg.src = monDataUrl; monImg.style.width = '100%'; monImg.style.margin = '12px 0';
-      off.appendChild(cumImg);
-      off.appendChild(monImg);
-
-      // append tables (use generators)
-      const tablesWrapper = document.createElement('div');
-      tablesWrapper.innerHTML = `<h2 style="font-size:16px;margin-top:8px;">Cumulative</h2>` + generateCumulativeTableHTML(months, agg.low, agg.median, agg.high) + `<h2 style="font-size:16px;margin-top:8px;">Monthly</h2>` + generateMonthlyTableHTML(months, state.categories || []);
-      off.appendChild(tablesWrapper);
-
-      document.body.appendChild(off);
-
-      const opt = {
-        margin: 0.4,
-        filename: 'savings-report.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-
-      try {
-        await html2pdf().set(opt).from(off).save();
-        showToast('PDF generated');
-      } catch (err) {
-        console.error('PDF export failed', err);
-        showToast('PDF export failed');
-      } finally {
-        // cleanup
-        try { off.remove(); } catch (e) {}
+      // open a new window and write the printable report HTML into it
+      const win = window.open('', '_blank');
+      if (!win) {
+        showToast('Unable to open new window for PDF');
+        return;
       }
+
+      const reportHTML = `\
+<!doctype html>\
+<html>\
+<head>\
+  <meta charset="utf-8">\
+  <title>Cost optimization - potential scenarios</title>\
+  <meta name="viewport" content="width=device-width, initial-scale=1">\
+  <style>\
+    @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');\
+    body { font-family: "Libre Franklin", Arial, Helvetica, sans-serif; font-size: 9pt; color: #222; margin: 24px; }\
+    h1 { font-size: 22pt; margin-bottom: 24px; }\
+    h2 { font-size: 16pt; margin-top: 12px; }\
+    table { width: 100%; border-collapse: collapse; margin-top:8px; }\
+    tr { break-inside: avoid; page-break-inside: avoid; }
+    th, td { border: 1px solid #ddd; padding: 6px; text-align: right; }\
+    th { background: #f6f6f6; text-align: left; }\
+    td.left { text-align: left; }\
+    .chart { width: 100%; height: 220px; margin: 12px 0; }\
+    .break-before { page-break-before: always; }\
+    .intro { margin-bottom: 36px; }\
+  </style>\
+</head>\
+</head>\
+<body>\
+  <h1>Cost optimization - potential scenarios</h1>\
+  <div id="intro" class="intro">${renderReportIntro(state)}</div>\
+  <h2>Cumulative Savings</h2>\
+  <img class="chart" src="${cumDataUrl}" height="220" />\
+  ${generateCumulativeTableHTML(months, agg.low, agg.median, agg.high)}\
+  <h2 class="break-before">By Month</h2>\
+  <img class="chart" src="${monDataUrl}" height="220" />\
+  <h2>Savings Breakdown</h2>\
+  ${generateMonthlyTableHTML(months, state.categories || [])}\
+</head>\
+  <script>\
+    (function(){\
+      function generate(){\
+        const opt = { margin: 0.4, filename: 'savings-potential.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };\
+        html2pdf().set(opt).from(document.body).save().then(() => { try { window.close(); } catch(e) {} });\
+      }\
+      if (window.html2pdf) { generate(); } else {\
+        var s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js'; s.onload = generate; document.head.appendChild(s);\
+      }\
+    })();\
+  <\/script>\
+</body>\
+</html>\
+`;
+
+      win.document.open();
+      win.document.write(reportHTML);
+      win.document.close();
     });
   }
 

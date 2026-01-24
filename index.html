@@ -80,11 +80,9 @@
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
                 <h1 class="text-3xl text-black pb-6">Cost optimization - potential scenarios</h1>
-                <p id="intro-text" class="mb-4 text-sm text-gray-700 italic">Savings estimations for optimized vendor expenses. How much cash flow can you free up?</p> 
-                <p class="text-sm text-gray-700">
-                    The cumulative savings rate includes a ±10% shaded range indicating fudge factor. </p>
-
-                <div class="flex flex-wrap mt-6">
+                <p id="intro-text" class="mb-6 text-md text-gray-700 italic">See how vendor optimization could unlock additional cash flow</p> 
+                
+                <div class="flex flex-wrap mt-8">
                     <div class="w-full pr-0 lg:pr-2">
                         <p class="text-xl pb-3 flex items-center">
                             <!-- Controls -->
@@ -109,14 +107,15 @@
                                 <div class="flex-1 text-right flex items-center justify-end gap-2">
                                     <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Reset</button>
                                     <button type="button" id="bookmark-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Bookmark</button>
-                                    <button type="button" id="report-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Report</button>
-                                    <button type="button" id="print-btn" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm ">Print</button>
-                                    <button type="button" id="export-pdf-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Export PDF</button>
+                                    <button type="button" id="export-pdf-btn" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm no-print">Export PDF</button>
                                 </div>
                             </form>
                         </p>
                         <div class="p-6 bg-white">
-                                    <canvas id="myChart" class="w-full" style="height:420px"></canvas>
+                            <div>
+                                <canvas id="myChart" class="w-full" style="height:420px"></canvas>
+                            </div>
+                            <p class="text-xs text-gray-500">Shaded band indicates a ±10% range around the cumulative savings rate</p>
                         </div>
                     </div>        
                 </div>
