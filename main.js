@@ -18,7 +18,13 @@ function renderTable(months, low, median, high) {
 }
 
 function renderChart(months, low, median, high) {
-  const ctx = document.getElementById('myChart').getContext('2d');
+  const canvas = document.getElementById('myChart');
+  // enforce fixed canvas height so re-renders don't grow the chart
+  const FIXED_HEIGHT_PX = 420;
+  canvas.style.height = FIXED_HEIGHT_PX + 'px';
+  // set the canvas height attribute too (pixel height)
+  canvas.height = FIXED_HEIGHT_PX;
+  const ctx = canvas.getContext('2d');
   const labels = Array.from({ length: months }, (_, i) => i + 1);
 
   // Destroy existing chart
@@ -63,6 +69,8 @@ function renderChart(months, low, median, high) {
       datasets: [lowDataset, highDataset, medianDataset]
     },
     options: {
+      maintainAspectRatio: false,
+      responsive: true,
       scales: {
         x: { title: { display: true, text: 'Month' } },
         y: { title: { display: true, text: 'Cumulative Savings (USD)' }, ticks: { callback: v => formatUSD(v) } }
@@ -89,7 +97,17 @@ function pushStateToUrl(state) {
   const s = encodeURIComponent(JSON.stringify(state));
   const url = new URL(window.location.href);
   url.searchParams.set('state', s);
-  window.history.replaceState({}, '', url.toString());
+  // push a new history entry so back/forward navigates between states
+  window.history.pushState({}, '', url.toString());
+}
+
+function clearChart() {
+  if (chartInstance) {
+    chartInstance.destroy();
+    chartInstance = null;
+  }
+  const container = document.getElementById('data-table');
+  if (container) container.innerHTML = '';
 }
 
 function showModal(show) {
@@ -197,6 +215,38 @@ function main() {
     pushStateToUrl(state);
     alert('Category added — click Render Chart to update.');
   });
+
+  // Immediate render when months selector changes
+  const monthsSelect = document.getElementById('months');
+  if (monthsSelect) {
+    monthsSelect.addEventListener('change', (e) => {
+      const months = parseInt(e.target.value, 10) || 36;
+      let state = getStateFromUrl() || {};
+      state.months = months;
+      // ensure categories exist (use modal inputs if needed)
+      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
+      pushStateToUrl(state);
+      const agg = aggregateCategories(state.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+  }
+
+  // Reset button: remove state from URL and show modal
+  const resetBtn = document.getElementById('reset-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('state');
+      // push the reset state so back will restore previous state
+      window.history.pushState({}, '', url.toString());
+      clearChart();
+      // reset months control to default
+      const monthsEl = document.getElementById('months');
+      if (monthsEl) monthsEl.value = 36;
+      showModal(true);
+    });
+  }
 
   // Render on form submit
   document.getElementById('chart-form').addEventListener('submit', (e) => {
