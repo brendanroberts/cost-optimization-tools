@@ -199,6 +199,40 @@ function renderCategoryList(state) {
 
     bottomRow.appendChild(spendInput);
 
+    // Rate input (percent) per category — text input with trailing % indicator
+    const rateRow = document.createElement('div');
+    rateRow.className = 'mt-2 flex items-center gap-2 text-sm';
+
+    const rateWrapper = document.createElement('div');
+    rateWrapper.className = 'relative w-24';
+
+    const rateInput = document.createElement('input');
+    rateInput.type = 'text';
+    const percent = ((cat.medianRateDecimal ?? 0.14) * 100).toFixed(1);
+    rateInput.value = percent;
+    rateInput.setAttribute('aria-label', 'Savings rate percent');
+    rateInput.className = 'w-full pr-8 p-2 rounded text-sm text-black';
+    rateInput.addEventListener('input', (e) => {
+      const raw = e.target.value || '14';
+      const cleaned = String(raw).replace(/[^0-9.\-]/g, '');
+      const p = parseFloat(cleaned);
+      cat.medianRateDecimal = (isNaN(p) ? 0.14 : p / 100);
+      pushStateToUrl(state);
+      const months = state.months || parseInt(document.getElementById('months')?.value || '36', 10);
+      const agg = aggregateCategories(state.categories, months);
+      renderChart(months, agg.low, agg.median, agg.high);
+      renderTable(months, agg.low, agg.median, agg.high);
+    });
+
+    const percentSpan = document.createElement('span');
+    percentSpan.className = 'absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-700 pointer-events-none';
+    percentSpan.innerText = '%';
+
+    rateWrapper.appendChild(rateInput);
+    rateWrapper.appendChild(percentSpan);
+    rateRow.appendChild(rateWrapper);
+    bottomRow.appendChild(rateRow);
+
     leftCol.appendChild(nameInput);
     leftCol.appendChild(bottomRow);
 
