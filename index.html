@@ -23,13 +23,13 @@
     </style>
 </head>
 <body class="bg-gray-100 font-family-karla flex">
-    <aside class="relative bg-navyblue h-screen w-64 hidden sm:block shadow-xl">
+    <aside class="relative bg-navyblue h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
         <div class="p-6 text-white">
             <h3 class="text-lg font-semibold mb-3">Categories</h3>
             <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
                 <i class="fas fa-plus mr-3"></i> Add Category
             </button>
-            <div id="categories-list" class="space-y-3 mt-4">
+            <div id="categories-list" class="space-y-3 mt-4" style="max-height: calc(100vh - 220px); overflow:auto;">
                 <!-- category rows rendered here -->
             </div>
         </div>
@@ -37,7 +37,7 @@
         <!-- category controls rendered into #categories-list -->
     </aside>
 
-    <div class="w-full flex flex-col h-screen overflow-y-hidden">
+    <div class="w-full flex flex-col h-screen overflow-y-auto">
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
                 <h1 class="text-3xl text-black pb-6">Cost optimization - potential scenarios</h1>
@@ -69,6 +69,7 @@
                                 
                                 <div class="flex-1 text-right flex items-center justify-end gap-2">
                                     <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm">Reset</button>
+                                    <button type="button" id="bookmark-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm">Bookmark</button>
                                 </div>
                             </form>
                         </p>

@@ -32,6 +32,15 @@ function formatUSD(n) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 }
 
+// Small toast helper
+function showToast(msg, timeout = 2000) {
+  const t = document.createElement('div');
+  t.className = 'fixed right-4 top-4 bg-navyblue text-white px-4 py-2 rounded shadow-lg z-60';
+  t.innerText = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { try { t.remove(); } catch (e) {} }, timeout);
+}
+
 function renderCumulativeTable(months, low, median, high) {
   const container = document.getElementById('data-table');
   let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th class="p-2 text-left">Month</th><th class="p-2 text-right">Low</th><th class="p-2 text-right">Median</th><th class="p-2 text-right">High</th></tr></thead><tbody>';
@@ -54,7 +63,8 @@ function renderMonthlyTable(months, categories) {
     let total = 0;
     categories.forEach(cat => {
       const monthly = Number(cat.monthly_spend) || 0;
-      const value = Math.round(monthly * (cat.medianRateDecimal ?? 0.14));
+      const start = Number(cat.start_month) || 1;
+      const value = ((m + 1) >= start) ? Math.round(monthly * (cat.medianRateDecimal ?? 0.14)) : 0;
       total += value;
       row += `<td class="p-2 text-right">${formatUSD(value)}</td>`;
     });
@@ -144,7 +154,8 @@ function renderMonthlyChart(months, categories) {
   const datasets = categories.map((cat, idx) => {
     const monthly = Number(cat.monthly_spend) || 0;
     const value = Math.round(monthly * (cat.medianRateDecimal ?? 0.14));
-    const data = new Array(months).fill(value);
+    const start = Number(cat.start_month) || 1;
+    const data = Array.from({ length: months }, (_, i) => (i + 1) >= start ? value : 0);
     return {
       label: cat.name || `Cat ${idx+1}`,
       data,
@@ -251,7 +262,7 @@ function handleModalKeydown(e) {
 
 function ensureAtLeastOneCategory(state) {
   if (!state.categories || !state.categories.length) {
-    state.categories = [{ name: 'wireless telecom', monthly_spend: 1000, medianRateDecimal: 0.14 }];
+    state.categories = [{ name: 'wireless telecom', monthly_spend: 1000, medianRateDecimal: 0.14, start_month: 1 }];
   }
 }
 
@@ -303,7 +314,30 @@ function renderCategoryList(state) {
     });
 
     bottomRow.appendChild(spendInput);
+    // Start month input
+    const startRow = document.createElement('div');
+    startRow.className = 'mt-2 flex items-center gap-2';
 
+    const startLabel = document.createElement('span');
+    startLabel.className = 'text-xs text-gray-700';
+    startLabel.innerText = 'Start';
+
+    const startInput = document.createElement('input');
+    startInput.type = 'number';
+    startInput.min = 1;
+    startInput.value = cat.start_month || 1;
+    startInput.className = 'w-20 p-2 rounded text-sm text-black';
+    startInput.addEventListener('input', (e) => {
+      const v = parseInt(e.target.value || '1', 10) || 1;
+      // clamp to at least 1
+      cat.start_month = Math.max(1, v);
+      pushStateToUrl(state);
+      renderFromState(state);
+    });
+
+    startRow.appendChild(startLabel);
+    startRow.appendChild(startInput);
+    bottomRow.appendChild(startRow);
     // Rate input (percent) per category — text input with trailing % indicator
     const rateRow = document.createElement('div');
     rateRow.className = 'mt-2 flex items-center gap-2 text-sm';
@@ -490,6 +524,27 @@ function main() {
     });
   }
 
+  // Bookmark button: copy current URL (with state) to clipboard
+  const bookmarkBtn = document.getElementById('bookmark-btn');
+  if (bookmarkBtn) {
+    bookmarkBtn.addEventListener('click', async () => {
+      // ensure we have state in URL
+      let state = currentState || getStateFromUrl() || {};
+      if (!state || !state.categories || !state.categories.length) {
+        state = collectStateFromUI(state);
+      }
+      pushStateToUrl(state);
+      const url = window.location.href;
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('Scenario link copied to clipboard');
+      } catch (err) {
+        // fallback: prompt
+        prompt('Copy this URL', url);
+      }
+    });
+  }
+
   // View mode selector
   const viewSelect = document.getElementById('view-mode');
   if (viewSelect) {
@@ -515,6 +570,12 @@ function main() {
   // If URL state existed, render immediately
   if (urlState) {
     renderFromState(urlState);
+  }
+
+  // If the months selector has autofocus on load, remove it to avoid unexpected focus
+  const monthsElInit = document.getElementById('months');
+  if (monthsElInit && document.activeElement === monthsElInit) {
+    try { monthsElInit.blur(); } catch (e) { /* ignore */ }
   }
 }
 
