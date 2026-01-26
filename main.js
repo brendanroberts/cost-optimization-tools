@@ -251,6 +251,10 @@ function renderFromState(state) {
   const view = state.view || 'cumulative';
   const titleEl = document.getElementById('table-title');
   if (titleEl) titleEl.innerText = (view === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
+  
+  const chartDesc = document.getElementById('chart-desc');
+  if (chartDesc) chartDesc.innerText = (view === 'monthly') ? '' : 'Shaded band indicates a ±10% range around the cumulative savings rate';
+  
   if (view === 'monthly') {
     renderMonthlyChart(months, state.categories || []);
     renderMonthlyTable(months, state.categories || []);
@@ -686,6 +690,7 @@ function main() {
   // }
 
   // Export PDF handler using html2pdf
+  // see also https://ekoopmans.github.io/html2pdf.js/
   const exportBtn = document.getElementById('export-pdf-btn');
   if (exportBtn) {
     exportBtn.addEventListener('click', async () => {
