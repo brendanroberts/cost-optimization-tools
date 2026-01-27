@@ -3,43 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
     <title>Cost optimization - potential scenarios</title>
     <meta name="author" content="Brendan Roberts">
     <meta name="description" content="Cost optimization insight calculator designed for accountants, controllers, and CFOs. It is intentionally neutral, conservative, and exploratory.">
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
-<!-- 
-        /* Primary Blues */
-        #12456C
-        #7D9BC0
-
-        /* Dark Blues */
-        #0B2F4A
-        #1E5D8A
-
-        /* Mid Blues */
-        #2F6F9F
-        #4F82AB
-
-        /* Light Blues */
-        #AFC2DA
-        #E6EDF5
-
-        /* Dark Greys */
-        #2E2E2E
-        #4A4F55
-
-        /* Mid Greys */
-        #7A8087
-        #B8BDC3
-
-        /* Light Greys */
-        #E4E6E8
-        #F6F7F9
-    
--->
-<style>
+    <style>
         @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
         .font-family-primary { font-family: "Libre Franklin", sans-serif; }
         .bg-blue-500 { background: #1E5D8A; }
@@ -55,18 +25,22 @@
         .active-nav-link { background: #0B2F4A; }
         .nav-item:hover { background: #0B2F4A; }
         .account-link:hover { background: #0B2F4A; }
+
         /* report-mode styles */
         .report-mode aside { display: none; }
         .report-mode #chart-form, .report-mode .no-print { display: none !important; }
         .report-mode #print-btn { display: inline-block !important; }
+        
         /* FAQ accordion styles (centered) */
         .faq-section { max-width: 48rem; margin-left: auto; margin-right: auto; }
         .faq-item { border: 1px solid #e5e7eb; border-radius: 6px; background: #ffffff; overflow: hidden; }
         .faq-button { width: 100%; text-align: left; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
         .faq-content { padding: 12px 16px; display: none; font-size: 0.95rem; color: #333; }
         .faq-icon { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; background: #f3f4f6; }
+        
         /* hide FAQ when generating report/PDF */
         .report-mode .faq-section, .faq-section.no-print { display: none !important; }
+        
         /* Tooltip for add-category examples */
         .tooltip-wrapper { position: relative; display: inline-block; }
         .tooltip-wrapper .tooltip-content { display: none; position: absolute; left: 0; top: calc(100% + 8px); width: 260px; background: #fff; color: #111; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; box-shadow: 0 6px 18px rgba(16,24,40,0.08); z-index: 50; }
@@ -78,26 +52,26 @@
 <body class="bg-gray-100 font-family-primary flex">
     <aside class="relative bg-grey-500 h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
         <div class="p-6 text-white">
-                        <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
-                            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-2 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
-                                    <i class="fas fa-plus mr-3"></i> Add Category
-                            </button>
-                        <div class="tooltip-wrapper">
-                            <div class="text-xs text-white mt-2">Examples of commonly reviewed vendor expenses</div>
-                            <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">
-                                <div style="font-weight:700;margin-bottom:6px;">Common examples</div>
-                                <ul class="text-sm" style="margin:0 0 8px 18px;padding:0;">
-                                    <li class="text-sm">Telecommunications</li>
-                                    <li>Credit card processing</li>
-                                    <li>Utilities</li>
-                                    <li>Software licenses</li>
-                                    <li>Small-package shipping</li>
-                                    <li>Waste and recycling</li>
-                                    <li>Uniforms and linens</li>
-                                </ul>
-                                <div style="font-size:12px;color:#6b7280;margin-top:6px;">Additional examples and guidance are available below.</div>
-                            </div>
-                        </div>
+            <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
+                <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-2 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
+                        <i class="fas fa-plus mr-3"></i> Add Category
+                </button>
+            <div class="tooltip-wrapper">
+                <div class="text-xs text-white mt-2">Examples of commonly reviewed vendor expenses</div>
+                <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">
+                    <div style="font-weight:700;margin-bottom:6px;">Common examples</div>
+                    <ul class="text-sm" style="margin:0 0 8px 18px;padding:0;">
+                        <li class="text-sm">Telecommunications</li>
+                        <li>Credit card processing</li>
+                        <li>Utilities</li>
+                        <li>Software licenses</li>
+                        <li>Small-package shipping</li>
+                        <li>Waste and recycling</li>
+                        <li>Uniforms and linens</li>
+                    </ul>
+                    <div style="font-size:12px;color:#6b7280;margin-top:6px;">Additional examples and guidance are available below.</div>
+                </div>
+            </div>
             <div id="categories-list" class="space-y-3 mt-4" style="max-height: calc(100vh - 220px); overflow:auto;">
                 <!-- category rows rendered here -->
             </div>
@@ -149,18 +123,17 @@
                         </div>
                     </div>        
                 </div>
-    
             
-                        <!-- report area (wrapped for printable/pdf export) -->
-                        <div id="report-area">
-                        <!-- schedule table -->
-                        <div class="w-full mt-12">
-                            <p id="table-title" class="text-xl pb-3 flex items-center">
-                                Cumulative Savings
-                            </p>
-                            <div id="data-table" class="bg-white overflow-auto"></div>
-                        </div>
-                        </div>
+                <!-- report area (wrapped for printable/pdf export) -->
+                <div id="report-area">
+                    <!-- schedule table -->
+                    <div class="w-full mt-12">
+                        <p id="table-title" class="text-xl pb-3 flex items-center">
+                            Cumulative Savings
+                        </p>
+                        <div id="data-table" class="bg-white overflow-auto"></div>
+                    </div>
+                </div>
 
                 <!-- FAQ (hidden from PDF/report views) -->
                 <section id="faq" class="faq-section mt-12">
@@ -281,9 +254,7 @@
                     This tool is provided as a thinking aid for finance professionals. No data is collected, stored, or shared.
                 </footer>
             </main>
-    
         </div>
-        
     </div>
     
     <!-- Initial modal: appears on first load unless URL state present -->
@@ -314,10 +285,8 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
-    <script type="module" src="./main.js"></script>
-    
+    <script type="module" src="./main.js"></script>    
 </body>
 </html>
