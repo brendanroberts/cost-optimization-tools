@@ -41,7 +41,7 @@
 -->
 <style>
         @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
-        .font-family-karla { font-family: "Libre Franklin", sans-serif; }
+        .font-family-primary { font-family: "Libre Franklin", sans-serif; }
         .bg-blue-500 { background: #1E5D8A; }
         .bg-blue-600 { background: #12456C; }
         .bg-blue-700 { background: #0B2F4A; }
@@ -59,15 +59,45 @@
         .report-mode aside { display: none; }
         .report-mode #chart-form, .report-mode .no-print { display: none !important; }
         .report-mode #print-btn { display: inline-block !important; }
+        /* FAQ accordion styles (centered) */
+        .faq-section { max-width: 48rem; margin-left: auto; margin-right: auto; }
+        .faq-item { border: 1px solid #e5e7eb; border-radius: 6px; background: #ffffff; overflow: hidden; }
+        .faq-button { width: 100%; text-align: left; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
+        .faq-content { padding: 12px 16px; display: none; font-size: 0.95rem; color: #333; }
+        .faq-icon { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; background: #f3f4f6; }
+        /* hide FAQ when generating report/PDF */
+        .report-mode .faq-section, .faq-section.no-print { display: none !important; }
+        /* Tooltip for add-category examples */
+        .tooltip-wrapper { position: relative; display: inline-block; }
+        .tooltip-wrapper .tooltip-content { display: none; position: absolute; left: 0; top: calc(100% + 8px); width: 260px; background: #fff; color: #111; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; box-shadow: 0 6px 18px rgba(16,24,40,0.08); z-index: 50; }
+        .tooltip-wrapper:hover .tooltip-content, .tooltip-wrapper:focus-within .tooltip-content { display: block; }
+        .tooltip-wrapper .tooltip-content ul { margin: 0 0 8px 16px; padding: 0; }
+        .tooltip-wrapper .tooltip-content li { margin-bottom: 4px; }
     </style>
 </head>
-<body class="bg-gray-100 font-family-karla flex">
+<body class="bg-gray-100 font-family-primary flex">
     <aside class="relative bg-grey-500 h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
         <div class="p-6 text-white">
-            <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
-            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-12 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
-                <i class="fas fa-plus mr-3"></i> Add Category
-            </button>
+                        <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
+                            <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-2 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
+                                    <i class="fas fa-plus mr-3"></i> Add Category
+                            </button>
+                        <div class="tooltip-wrapper">
+                            <div class="text-xs text-white mt-2">Examples of commonly reviewed vendor expenses</div>
+                            <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">
+                                <div style="font-weight:700;margin-bottom:6px;">Common examples</div>
+                                <ul class="text-sm" style="margin:0 0 8px 18px;padding:0;">
+                                    <li class="text-sm">Telecommunications</li>
+                                    <li>Credit card processing</li>
+                                    <li>Utilities</li>
+                                    <li>Software licenses</li>
+                                    <li>Small-package shipping</li>
+                                    <li>Waste and recycling</li>
+                                    <li>Uniforms and linens</li>
+                                </ul>
+                                <div style="font-size:12px;color:#6b7280;margin-top:6px;">Additional examples and guidance are available below.</div>
+                            </div>
+                        </div>
             <div id="categories-list" class="space-y-3 mt-4" style="max-height: calc(100vh - 220px); overflow:auto;">
                 <!-- category rows rendered here -->
             </div>
@@ -131,6 +161,125 @@
                             <div id="data-table" class="bg-white overflow-auto"></div>
                         </div>
                         </div>
+
+                <!-- FAQ (hidden from PDF/report views) -->
+                <section id="faq" class="faq-section mt-12">
+                    <h2 class="text-2xl text-center mb-4">FAQ</h2>
+                    <div class="space-y-3">
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>What types of expenses are typically well-suited for optimization?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Expenses that sit below gross margin and are tied to ongoing vendor relationships often present the most opportunity. These costs tend to accumulate quietly over time and are rarely revisited unless there is a disruption.</p>
+                                <p class="mt-2">Common examples include:</p>
+                                <ul class="list-disc ml-6 mt-2">
+                                    <li>Telecommunications</li>
+                                    <li>Credit card processing fees</li>
+                                    <li>Utilities</li>
+                                    <li>Small-package shipping</li>
+                                    <li>Waste and recycling</li>
+                                    <li>Uniforms and linens</li>
+                                    <li>Software licenses and subscriptions</li>
+                                    <li>Payroll-related services (e.g., FICA / Section 125 plans)</li>
+                                    <li>Compressed gases</li>
+                                    <li>Fuel</li>
+                                    <li>Janitorial supplies</li>
+                                    <li>Office supplies</li>
+                                </ul>
+                                <p class="mt-2">Results vary by organization, contract structure, and vendor landscape.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How long does it typically take to see meaningful results?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>The initial review and adjustment phase often spans <b>4-8 weeks</b>. This is typically a one-time effort to align service levels and usage with actual needs, while revisiting pricing and contract terms based on current market conditions. <b>Then allow one invoice cycle to see revised pricing flow through.</b></p>
+                                <p class="mt-2">After that, the work shifts to </b>ongoing monitoring</b>. Vendor expenses are reviewed periodically, with adjustments made when usage, pricing, or service requirements drift over time. These follow-ups are usually incremental rather than disruptive.</p>
+                                <p class="mt-2">The ongoing effort is modest, but consistency matters. Small inefficiencies tend to accumulate if left unattended.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How often should vendor expenses be reviewed?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Most organizations benefit from reviewing vendor expenses on a quarterly or semi-annual basis, depending on volatility and materiality.</p>
+                                <p class="mt-2">Highly variable services (e.g., usage-based or transactional costs) tend to warrant more frequent review, while stable, contract-based services can often be reviewed less often. The goal is not constant renegotiation, but timely detection of misalignment as usage, pricing, or service needs evolve.</p>
+                                <p class="mt-2">Regular review helps prevent small inefficiencies from compounding unnoticed.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Are the savings shown guaranteed?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>No. The scenarios shown are <b>illustrative</b>, not guarantees.</p>
+                                <p class="mt-2">In some cases, a review confirms that pricing, service levels, and usage are already well-aligned. That outcome should be viewed positively, as it validates that strong stewardship and market-appropriate pricing are already in place.</p>
+                                <p class="mt-2">The value of the process is not only identifying savings, but establishing confidence that vendor spend remains appropriate over time.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Does this require changing vendors?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Not necessarily.</p>
+                                <p class="mt-2">In many cases, meaningful improvements can be achieved while retaining existing vendors by adjusting pricing, scope, or contract terms. Vendor changes are typically considered only when service requirements cannot be met competitively or when better-aligned alternatives exist.</p>
+                                <p class="mt-2">This tool does not assume disruption; it is designed to surface options and tradeoffs.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Can this work be done internally?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Yes. Many organizations manage vendor reviews internally as part of regular financial oversight.</p>
+                                <p class="mt-2">The work is generally straightforward but detail-oriented, and it tends to compete with higher-priority responsibilities. As a result, reviews may rely heavily on vendor-provided information or focus primarily on pricing, rather than on whether services and usage remain well-matched to current needs.</p>
+                                <p class="mt-2">This tool is intended to support consistent, structured internal reviews by making scope, assumptions, and tradeoffs more explicit.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How should these scenarios and reports be used?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>The scenarios are intended to support <b>internal discussion and decision-making</b>, not to serve as forecasts or commitments.</p>
+                                <p class="mt-2">Exported reports are best used as illustrative materials when evaluating options, prioritizing review efforts, or framing conversations with stakeholders. When shared externally, they should be presented as scenario-based analyses rather than promised outcomes.</p>
+                                <p class="mt-2">This tool is not designed to replace procurement systems, audits, or formal sourcing processes.</p>
+                                <p class="mt-2">Professional judgment remains essential.</p>
+                            </div>
+                        </div>                        
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Who created this tool?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>This tool was developed by a cost optimization practitioner as a standalone scenario exploration aid for finance professionals. It reflects a continuous vendor expense management approach, rather than a one-time sourcing or RFP exercise.</p>
+                                <p class="mt-2">No data is collected, stored, or tracked.</p>
+                                <p class="mt-2">If you have questions about the modeling assumptions, you're welcome to reach out:<br/><i>Brendan Roberts — brendan.roberts@schooleymitchell.com</i></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="w-full mt-8 py-4 bg-white text-center text-sm text-gray-700">
+                    This tool is provided as a thinking aid for finance professionals. No data is collected, stored, or shared.
+                </footer>
             </main>
     
         </div>

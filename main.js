@@ -809,6 +809,21 @@ function main() {
   if (monthsElInit && document.activeElement === monthsElInit) {
     try { monthsElInit.blur(); } catch (e) { /* ignore */ }
   }
+
+  // FAQ accordion: wire up toggle buttons (hidden from PDF via .no-print)
+  const faqButtons = document.querySelectorAll('.faq-button');
+  faqButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      if (!item) return;
+      const content = item.querySelector('.faq-content');
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', (!expanded).toString());
+      if (content) content.style.display = expanded ? 'none' : 'block';
+      const icon = btn.querySelector('.faq-icon');
+      if (icon) icon.textContent = expanded ? '+' : '−';
+    });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', main);
