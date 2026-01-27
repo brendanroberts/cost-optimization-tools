@@ -129,16 +129,7 @@ export function renderMonthlyChart(months, categories, canvasEl = null, printabl
   const labels = Array.from({ length: months }, (_, i) => i + 1);
   const fontSize = printable ? 24 : 13;
 
-  const paletteKeys = [
-    "navyblue-50",
-    "navyblue-100",
-    "navyblue-200",
-    "navyblue-300",
-    "navyblue-400",
-    "navyblue-500",
-    "navyblue-600",
-    "navyblue-700",
-  ];
+  const paletteKeys = ['navyblue-700', 'navyblue-600', 'navyblue-500', 'navyblue-400', 'navyblue-300', 'navyblue-200', 'navyblue-100', 'navyblue-50'];
   const colors = categories.map(
     (c, idx) =>
       PALETTE[paletteKeys[idx % paletteKeys.length]] || PALETTE.navyblue,

@@ -1,4 +1,4 @@
-import { aggregateCategories } from './calculations.js';
+import { aggregateCategories } from './src/calculations.js';
 import { renderCumulativeChart, renderMonthlyChart, clearChart } from './src/charts.js';
 import { generateCumulativeTableHTML, generateMonthlyTableHTML } from './src/ui.js';
 import { exportReport } from './src/pdf.js';

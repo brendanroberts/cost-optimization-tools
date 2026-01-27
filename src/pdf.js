@@ -1,6 +1,6 @@
 import { renderCumulativeChart, renderMonthlyChart } from './charts.js';
 import { generateCumulativeTableHTML, generateMonthlyTableHTML, renderReportIntro } from './ui.js';
-import { aggregateCategories } from '../calculations.js';
+import { aggregateCategories } from './calculations.js';
 
 export async function exportReport(state) {
     const months = state.months || 36;
@@ -54,11 +54,11 @@ export async function exportReport(state) {
     body { font-family: "Libre Franklin", Arial, Helvetica, sans-serif; font-size: 9pt; color: #222; margin: 24px; }\
     h1 { font-size: 22pt; margin-bottom: 24px; }\
     h2 { font-size: 16pt; margin-top: 12px; }\
-    table { width: 100%; border-collapse: collapse; margin-top:8px; }\
+    table { width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-top:8px; }\
     tr { break-inside: avoid; page-break-inside: avoid; }
-    th, td { border: 1px solid #ddd; padding: 6px; text-align: right; }\
-    th { background: #f6f6f6; text-align: left; }\
-    td.left { text-align: left; }\
+    th, td { padding: 6px; }\
+    td { border-bottom: 1px solid #ddd; padding: 6px; }\
+    th { border-bottom: 1px solid #ddd; background: #f6f6f6; }\
     .chart { width: 100%; height: 220px; margin: 12px 0; }\
     .break-before { page-break-before: always; }\
     .intro { margin-bottom: 36px; }\

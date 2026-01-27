@@ -14,7 +14,8 @@ export function computeCategoryCumulative(monthlySpend, medianRateDecimal, month
   const median = [];
   const high = [];
 
-  // Each month, if month >= startMonth then savings = monthly * rate; cumulative adds the monthly savings (no compounding)
+  // Each month, if month >= startMonth then savings = monthly * rate; 
+  // cumulative adds the monthly savings (no compounding)
   for (let i = 0; i < months; i++) {
     const monthIndex = i + 1;
     if (monthIndex >= startMonth) {
