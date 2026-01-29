@@ -109,6 +109,15 @@ function ensureAtLeastOneCategory(state) {
 }
 
 function renderCategoryList(state) {
+  const reductionPercentTooltip = '<div class="tooltip-wrapper">\
+      <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
+      <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
+          <div class="text-sm">\
+              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category and starting point.\
+          </div>\
+      </div>\
+    </div>';
+  
   const list = document.getElementById('categories-list');
   if (!list) return;
 
@@ -216,12 +225,13 @@ function renderCategoryList(state) {
 
     const rateLabel = document.createElement('label');
     rateLabel.className = 'block text-sm font-medium text-white';
-    rateLabel.innerText = 'Savings rate (%)';
+    rateLabel.innerHTML = reductionPercentTooltip;
 
     const rateInput = document.createElement('input');
+    rateInput.placeholder = 'e.g. 5-15';
     rateInput.id = `cat-rate-${idx}`;
     rateInput.type = 'text';
-    const percent = ((cat.medianRateDecimal ?? 0.14) * 100).toFixed(0);
+    const percent = ((cat.medianRateDecimal ?? 0) * 100).toFixed(0);
     rateInput.value = percent;
     rateInput.setAttribute('aria-label', 'Savings rate percent');
     rateInput.className = 'w-full pr-8 p-2 rounded text-sm text-black';

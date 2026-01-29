@@ -52,8 +52,8 @@ export async function exportReport(state) {
 <style>\
     @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');\
     body { font-family: "Libre Franklin", Arial, Helvetica, sans-serif; font-size: 9pt; color: #222; margin: 24px; }\
-    h1 { font-size: 22pt; margin-bottom: 24px; }\
-    h2 { font-size: 16pt; margin-top: 12px; }\
+    h1 { font-size: 22pt; font-weight: normal; margin-bottom: 24px; }\
+    h2 { font-size: 16pt; font-weight: normal; margin-top: 12px; }\
     table { width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-top:8px; }\
     tr { break-inside: avoid; page-break-inside: avoid; }
     th, td { padding: 6px; }\
