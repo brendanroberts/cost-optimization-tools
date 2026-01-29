@@ -36,10 +36,18 @@ export function renderReportIntro(state) {
   const rows = (state.categories || []).map(cat => {
     return `<tr class="border-b"><td style="text-align: left;" class="p-2">${escapeHtml(cat.name || '')}</td><td style="text-align: right;" class="p-2 text-right">${formatUSD(Number(cat.monthly_spend)||0)}</td><td style="text-align: right;" class="p-2 text-right">${((cat.medianRateDecimal||0)*100).toFixed(0)}%</td><td style="text-align: right;" class="p-2 text-right">${Number(cat.start_month||1)}</td></tr>`;
   }).join('\n');
-  return `<h2>Assumptions</h2><table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th style="text-align: left;" class="p-2 text-left">Category</th><th style="text-align: right;" class="p-2 text-right">Monthly Spend</th><th style="text-align: right;" class="p-2 text-right">Savings Rate</th><th style="text-align: right;" class="p-2 text-right">Start Month</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<h2>Assumptions</h2><table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th style="text-align: left;" class="p-2 text-left">Category</th><th style="text-align: right;" class="p-2 text-right">Monthly Spend</th><th style="text-align: right;" class="p-2 text-right">Estimated vendor cost reduction (%)</th><th style="text-align: right;" class="p-2 text-right">Start Month</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+export const reductionPercentTooltip = '<div class="tooltip-wrapper">\
+      <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
+      <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
+          <div class="text-sm">\
+              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category and starting point.\
+          </div>\
+      </div>\
+    </div>';

@@ -1,6 +1,7 @@
+import { defaultState } from './src/constants.js';
 import { aggregateCategories } from './src/calculations.js';
 import { renderCumulativeChart, renderMonthlyChart, clearChart } from './src/charts.js';
-import { generateCumulativeTableHTML, generateMonthlyTableHTML } from './src/ui.js';
+import { generateCumulativeTableHTML, generateMonthlyTableHTML, reductionPercentTooltip } from './src/ui.js';
 import { exportReport } from './src/pdf.js';
 
 let currentState = null;
@@ -26,7 +27,7 @@ function renderMonthlyTable(months, categories) {
 
 function renderFromState(state) {
   if (!state) return;
-  const months = state.months || 36;
+  const months = state.months || defaultState.months;
   const view = state.view || 'cumulative';
   const titleEl = document.getElementById('table-title');
   if (titleEl) titleEl.innerText = (view === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
@@ -66,42 +67,6 @@ function pushStateToUrl(state) {
   currentState = state;
 }
 
-function showModal(show) {
-  const m = document.getElementById('initial-modal');
-  let previousActiveElement = null;
-
-  if (!m) return;
-  if (show) {
-    previousActiveElement = document.activeElement;
-    m.classList.remove('hidden');
-    m.setAttribute('aria-hidden', 'false');
-    // focus first input
-    const first = m.querySelector('#modal-category');
-    if (first) first.focus();
-    // add keydown listener for Escape
-    document.addEventListener('keydown', handleModalKeydown);
-  } else {
-    // move focus away from any element inside the modal before hiding it
-    if (previousActiveElement && typeof previousActiveElement.focus === 'function') {
-      try { previousActiveElement.focus(); } catch (e) { /* ignore */ }
-    } else {
-      const fallback = document.getElementById('months') || document.body;
-      if (fallback && typeof fallback.focus === 'function') try { fallback.focus(); } catch (e) {}
-    }
-
-    m.classList.add('hidden');
-    m.setAttribute('aria-hidden', 'true');
-    document.removeEventListener('keydown', handleModalKeydown);
-    previousActiveElement = null;
-  }
-}
-
-function handleModalKeydown(e) {
-  if (e.key === 'Escape') {
-    showModal(false);
-  }
-}
-
 function ensureAtLeastOneCategory(state) {
   if (!state.categories || !state.categories.length) {
     state.categories = [{ name: 'wireless telecom', monthly_spend: 1000, medianRateDecimal: 0.14, start_month: 1 }];
@@ -109,15 +74,6 @@ function ensureAtLeastOneCategory(state) {
 }
 
 function renderCategoryList(state) {
-  const reductionPercentTooltip = '<div class="tooltip-wrapper">\
-      <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
-      <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
-          <div class="text-sm">\
-              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category and starting point.\
-          </div>\
-      </div>\
-    </div>';
-  
   const list = document.getElementById('categories-list');
   if (!list) return;
 
@@ -301,17 +257,17 @@ function addCategoryToState(state, name = 'New Category', monthly = 1000) {
 
 function loadFromState(state) {
   ensureAtLeastOneCategory(state);
-  document.getElementById('months').value = state.months || 36;
+  document.getElementById('months').value = state.months || defaultState.months;
   const viewEl = document.getElementById('view-mode');
   if (viewEl) viewEl.value = state.view || 'cumulative';
 }
 
 function collectStateFromUI(existingState) {
-  const months = parseInt(document.getElementById('months').value, 10) || 36;
+  const months = parseInt(document.getElementById('months').value, 10) || defaultState.months;
   const state = existingState || {};
   state.months = months;
   state.view = document.getElementById('view-mode')?.value || 'cumulative';
-  // if categories already defined (from modal or URL), keep them; otherwise try to use modal inputs
+  // if categories already defined (from URL), keep them; otherwise try to use modal inputs
   if (!state.categories || !state.categories.length) {
     const name = document.getElementById('modal-category')?.value || 'wireless telecom';
     const monthly = parseInt(document.getElementById('modal-monthly')?.value || '1000', 10) || 1000;
@@ -320,69 +276,30 @@ function collectStateFromUI(existingState) {
   return state;
 }
 
+function initializeState() {
+  currentState = defaultState;
+  pushStateToUrl(currentState);
+  renderCategoryList(currentState);
+  renderFromState(currentState);
+}
+
 function main() {
   // Handle URL state and initialize currentState so sidebar renders immediately
   const urlState = getStateFromUrl();
+  
   if (urlState) {
     currentState = urlState;
     loadFromState(currentState);
-    showModal(false);
-    // render sidebar categories from state
     renderCategoryList(currentState);
+
   } else {
-    // do not render categories yet — wait for user to complete the initial modal
-    currentState = null;
-    showModal(true);
-  }
-
-  // Modal start button
-  document.getElementById('modal-start').addEventListener('click', () => {
-    const state = collectStateFromUI();
-    pushStateToUrl(state);
-
-    // update in-memory state and sidebar
-    currentState = state;
-    renderCategoryList(currentState);
-
-    // Render immediately so the user sees the chart without having to click Render
-    renderFromState(state);
-
-    // move focus to a non-modal control before hiding to avoid aria-hidden-on-focused-element
-    const monthsEl = document.getElementById('months');
-    if (monthsEl && typeof monthsEl.focus === 'function') monthsEl.focus();
-
-    showModal(false);
-  });
-
-  // Close button
-  const modalClose = document.getElementById('modal-close');
-  if (modalClose) modalClose.addEventListener('click', () => showModal(false));
-
-  // Backdrop click closes modal
-  const modalBackdrop = document.getElementById('modal-backdrop');
-  if (modalBackdrop) modalBackdrop.addEventListener('click', () => showModal(false));
-
-  // Add category: open a quick prompt (keeps implementation light)
-  const addCatBtn = document.getElementById('add-category');
-  if (addCatBtn) {
-    addCatBtn.addEventListener('click', () => {
-      // require initial modal/state first
-      if (!currentState) { showModal(true); return; }
-      const name = prompt('Category name', 'New Category');
-      const monthly = parseInt(prompt('Monthly spend (whole dollars)', '1000') || '1000', 10);
-      if (!name) return;
-      addCategoryToState(currentState, name, monthly);
-      renderCategoryList(currentState);
-      renderFromState(currentState);
-    });
+    initializeState();
   }
 
   // Add category from aside (left rail)
   const asideAdd = document.getElementById('aside-add-category');
   if (asideAdd) {
     asideAdd.addEventListener('click', () => {
-      // Ensure initial modal/state has been completed first
-      if (!currentState) { showModal(true); return; }
       addCategoryToState(currentState, `Category ${ (currentState.categories||[]).length + 1 }`, 1000);
       renderCategoryList(currentState);
       renderFromState(currentState);
@@ -393,9 +310,22 @@ function main() {
   const monthsSelect = document.getElementById('months');
   if (monthsSelect) {
     monthsSelect.addEventListener('change', (e) => {
-      const months = parseInt(e.target.value, 10) || 36;
+      const months = parseInt(e.target.value, 10) || defaultState.months;
       let state = getStateFromUrl() || {};
       state.months = months;
+      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
+      pushStateToUrl(state);
+      renderFromState(state);
+    });
+  }
+
+  // View mode selector
+  const viewSelect = document.getElementById('view-mode');
+  if (viewSelect) {
+    viewSelect.addEventListener('change', (e) => {
+      const view = e.target.value || 'cumulative';
+      let state = getStateFromUrl() || {};
+      state.view = view;
       if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
       pushStateToUrl(state);
       renderFromState(state);
@@ -413,12 +343,12 @@ function main() {
       clearChart();
       // reset months control to default
       const monthsEl = document.getElementById('months');
-      if (monthsEl) monthsEl.value = 36;
+      if (monthsEl) monthsEl.value = defaultState.months;
       // clear categories list UI as well
       const list = document.getElementById('categories-list');
       if (list) list.innerHTML = '';
       currentState = null;
-      showModal(true);
+      initializeState();
     });
   }
 
@@ -440,19 +370,6 @@ function main() {
         // fallback: prompt
         prompt('Copy this URL', url);
       }
-    });
-  }
-
-  // View mode selector
-  const viewSelect = document.getElementById('view-mode');
-  if (viewSelect) {
-    viewSelect.addEventListener('change', (e) => {
-      const view = e.target.value || 'cumulative';
-      let state = getStateFromUrl() || {};
-      state.view = view;
-      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
-      pushStateToUrl(state);
-      renderFromState(state);
     });
   }
 

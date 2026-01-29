@@ -19,6 +19,19 @@ export const PALETTE = {
   'accent-yellow': '#F2C94C'
 };
 
+export const defaultState = {
+  months: 36,
+  view: 'cumulative',
+  categories: [
+    { name: 'Wireless telecom', monthly_spend: 3000, medianRateDecimal: 0.14, start_month: 1 },
+    { name: 'Wireline telecom', monthly_spend: 4000, medianRateDecimal: 0.14, start_month: 2 },
+    { name: 'Utilities', monthly_spend: 25000, medianRateDecimal: 0.04, start_month: 2 },
+    { name: 'Credit card processing fees', monthly_spend: 3700, medianRateDecimal: 0.14, start_month: 3 },
+    { name: 'Small-package shipping', monthly_spend: 9000, medianRateDecimal: 0.14, start_month: 4 },
+    { name: 'Waste and recycling', monthly_spend: 6000, medianRateDecimal: 0.14, start_month: 6 },
+  ],
+};
+
 export function hexToRgba(hex, alpha = 1) {
   const h = hex.replace('#', '');
   const bigint = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
