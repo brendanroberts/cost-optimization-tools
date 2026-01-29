@@ -1,8 +1,8 @@
-import { defaultState } from './src/constants.js';
-import { aggregateCategories } from './src/calculations.js';
-import { renderCumulativeChart, renderMonthlyChart, clearChart } from './src/charts.js';
-import { generateCumulativeTableHTML, generateMonthlyTableHTML, reductionPercentTooltip } from './src/ui.js';
-import { exportReport } from './src/pdf.js';
+import { defaultState } from './constants.js';
+import { aggregateCategories } from './calculations.js';
+import { renderCumulativeChart, renderMonthlyChart, clearChart } from './charts.js';
+import { generateCumulativeTableHTML, generateMonthlyTableHTML, reductionPercentTooltip } from './ui.js';
+import { exportReport } from './pdf.js';
 
 let currentState = null;
 
