@@ -21,7 +21,7 @@ export const PALETTE = {
 
 export const defaultState = {
   months: 36,
-  view: 'cumulative',
+  view: 'monthly',
   categories: [
     { name: 'Wireless telecom', monthly_spend: 3000, medianRateDecimal: 0.14, start_month: 1 },
     { name: 'Wireline telecom', monthly_spend: 4000, medianRateDecimal: 0.14, start_month: 2 },

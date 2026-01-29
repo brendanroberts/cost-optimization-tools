@@ -28,7 +28,7 @@ function renderMonthlyTable(months, categories) {
 function renderFromState(state) {
   if (!state) return;
   const months = state.months || defaultState.months;
-  const view = state.view || 'cumulative';
+  const view = state.view || defaultState.view;
   const titleEl = document.getElementById('table-title');
   if (titleEl) titleEl.innerText = (view === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
   
@@ -179,7 +179,7 @@ function renderCategoryList(state) {
     const rateRow = document.createElement('div');
     rateRow.className = 'mt-6';
 
-    const rateLabel = document.createElement('label');
+    const rateLabel = document.createElement('div');
     rateLabel.className = 'block text-sm font-medium text-white';
     rateLabel.innerHTML = reductionPercentTooltip;
 
@@ -249,9 +249,9 @@ function renderCategoryList(state) {
   });
 }
 
-function addCategoryToState(state, name = 'New Category', monthly = 1000) {
+function addCategoryToState(state, name = 'New Category', monthly_spend = 1000) {
   state.categories = state.categories || [];
-  state.categories.unshift({ name, monthly_spend: monthly, medianRateDecimal: 0.14 });
+  state.categories.unshift({ name, monthly_spend: monthly_spend, medianRateDecimal: 0.14 });
   pushStateToUrl(state);
 }
 
@@ -270,8 +270,8 @@ function collectStateFromUI(existingState) {
   // if categories already defined (from URL), keep them; otherwise try to use modal inputs
   if (!state.categories || !state.categories.length) {
     const name = document.getElementById('modal-category')?.value || 'wireless telecom';
-    const monthly = parseInt(document.getElementById('modal-monthly')?.value || '1000', 10) || 1000;
-    state.categories = [{ name, monthly_spend: monthly, medianRateDecimal: 0.14 }];
+    const monthly_spend = parseInt(document.getElementById('modal-monthly')?.value || '1000', 10) || 1000;
+    state.categories = [{ name, monthly_spend: monthly_spend, medianRateDecimal: 0.14 }];
   }
   return state;
 }
