@@ -1,4 +1,5 @@
 import { PALETTE, hexToRgba, formatUSD } from "./constants.js";
+import { chartDimensions as printDimensions } from "./pdf.js";
 
 let chartInstance = null;
 
@@ -11,6 +12,15 @@ export function clearChart() {
   }
 }
 
+function getChartContext(canvasEl, printable = false) {
+  const canvas = canvasEl || document.getElementById("scenarioChart");
+  const FIXED_HEIGHT_PX = printable ? printDimensions.height : 420;
+  canvas.style.height = FIXED_HEIGHT_PX + "px";
+  canvas.height = FIXED_HEIGHT_PX;
+  const ctx = canvas.getContext("2d");
+  return ctx;
+}
+
 export function renderCumulativeChart(
   months,
   low,
@@ -19,13 +29,9 @@ export function renderCumulativeChart(
   canvasEl = null,
   printable = false,
 ) {
-  const canvas = canvasEl || document.getElementById("myChart");
-  const FIXED_HEIGHT_PX = 420;
-  canvas.style.height = FIXED_HEIGHT_PX + "px";
-  canvas.height = FIXED_HEIGHT_PX;
-  const ctx = canvas.getContext("2d");
+  const ctx = getChartContext(canvasEl, printable);
   const labels = Array.from({ length: months }, (_, i) => i + 1);
-  const fontSize = printable ? 24 : 13;
+  const fontSize = printable ? '24px' : '13px';
 
   const lowDataset = {
     label: "Low",
@@ -79,13 +85,13 @@ export function renderCumulativeChart(
           },
         },
         y: {
-          title: { 
-            display: true, 
+          title: {
+            display: true,
             text: "Cumulative Savings (USD)",
             font: {
               size: fontSize,
             },
-         },
+          },
           ticks: {
             font: {
               size: fontSize,
@@ -94,18 +100,18 @@ export function renderCumulativeChart(
           },
         },
       },
-      plugins: { 
-        tooltip: { 
-            enabled: true 
+      plugins: {
+        tooltip: {
+          enabled: true,
         },
         legend: {
-            labels: {
-                font: {
-                    size: fontSize
-                }
-            }
-        } 
-     },
+          labels: {
+            font: {
+              size: fontSize,
+            },
+          },
+        },
+      },
       interaction: { intersect: false, mode: "index" },
     },
   };
@@ -115,26 +121,28 @@ export function renderCumulativeChart(
     return tmp;
   }
 
-  if (chartInstance) chartInstance.destroy();
+  if (chartInstance && !printable) clearChart();
   chartInstance = new Chart(ctx, cfg);
   return chartInstance;
 }
 
-export function renderMonthlyChart(months, categories, canvasEl = null, printable = false) {
-  const canvas = canvasEl || document.getElementById("myChart");
-  const FIXED_HEIGHT_PX = 420;
-  canvas.style.height = FIXED_HEIGHT_PX + "px";
-  canvas.height = FIXED_HEIGHT_PX;
-  const ctx = canvas.getContext("2d");
-  const labels = Array.from({ length: months }, (_, i) => i + 1);
-  const fontSize = printable ? 24 : 13;
-
-  const paletteKeys = ['navyblue-700', 'navyblue-600', 'navyblue-500', 'navyblue-400', 'navyblue-300', 'navyblue-200', 'navyblue-100', 'navyblue-50'];
+function getMonthlyDataSets(months, categories) {
+  const paletteKeys = [
+    "navyblue-700",
+    "navyblue-600",
+    "navyblue-500",
+    "navyblue-400",
+    "navyblue-300",
+    "navyblue-200",
+    "navyblue-100",
+    "navyblue-50",
+  ];
   const colors = categories.map(
     (c, idx) =>
       PALETTE[paletteKeys[idx % paletteKeys.length]] || PALETTE.navyblue,
   );
-  const datasets = categories.map((cat, idx) => {
+  
+  return categories.map((cat, idx) => {
     const monthly = Number(cat.monthly_spend) || 0;
     const value = Math.round(monthly * (cat.medianRateDecimal ?? 0.14));
     const start = Number(cat.start_month) || 1;
@@ -148,6 +156,18 @@ export function renderMonthlyChart(months, categories, canvasEl = null, printabl
       stack: "savings",
     };
   });
+}
+
+export function renderMonthlyChart(
+  months,
+  categories,
+  canvasEl = null,
+  printable = false,
+) {
+  const ctx = getChartContext(canvasEl, printable);
+  const labels = Array.from({ length: months }, (_, i) => i + 1);
+  const fontSize = printable ? 24 : 13;
+  const datasets = getMonthlyDataSets(months, categories);
 
   const cfg = {
     type: "bar",
@@ -158,8 +178,8 @@ export function renderMonthlyChart(months, categories, canvasEl = null, printabl
       scales: {
         x: {
           stacked: true,
-          title: { 
-            display: true, 
+          title: {
+            display: true,
             text: "Month",
             font: {
               size: fontSize,
@@ -173,9 +193,9 @@ export function renderMonthlyChart(months, categories, canvasEl = null, printabl
         },
         y: {
           stacked: true,
-          title: { 
-            display: true, 
-            text: "Monthly Savings (USD)", 
+          title: {
+            display: true,
+            text: "Monthly Savings (USD)",
             font: {
               size: fontSize,
             },
@@ -187,28 +207,28 @@ export function renderMonthlyChart(months, categories, canvasEl = null, printabl
             callback: (v) => formatUSD(v),
           },
         },
-      },    
-      plugins: { 
-        tooltip: { 
-            enabled: true 
+      },
+      plugins: {
+        tooltip: {
+          enabled: true,
         },
         legend: {
-            labels: {
-                font: {
-                    size: fontSize
-                }
-            }
-        } 
-     },
+          labels: {
+            font: {
+              size: fontSize,
+            },
+          },
+        },
+      },
     },
   };
 
   if (canvasEl) {
-    const tmp = new Chart(ctx, cfg);
-    return tmp;
+    const c = new Chart(ctx, cfg);
+    return c;
   }
 
-  if (chartInstance) chartInstance.destroy();
+  if (chartInstance && !printable) clearChart();
   chartInstance = new Chart(ctx, cfg);
   return chartInstance;
 }

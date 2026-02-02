@@ -8,7 +8,7 @@
     <title>Cost optimization - potential scenarios</title>
     <meta name="author" content="Brendan Roberts">
     <meta name="description"
-        content="Cost optimization insight calculator designed for accountants, controllers, and CFOs. It is intentionally neutral, conservative, and exploratory.">
+        content="Cost optimization insight calculator designed for accountants, controllers, and CFOs.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="./main.css" rel="stylesheet">
 </head>
@@ -43,8 +43,6 @@
                 <!-- category rows rendered here -->
             </div>
         </div>
-
-        <!-- category controls rendered into #categories-list -->
     </aside>
 
     <div class="w-full flex flex-col h-screen overflow-y-auto">
@@ -89,7 +87,7 @@
                         </p>
                         <div class="p-6 bg-white">
                             <div>
-                                <canvas id="myChart" class="w-full" style="height:420px"></canvas>
+                                <canvas id="scenarioChart" class="w-full"></canvas>
                             </div>
                             <p id="chart-desc" class="text-xs text-gray-500"></p>
                         </div>

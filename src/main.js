@@ -35,6 +35,9 @@ function renderFromState(state) {
   const chartDesc = document.getElementById('chart-desc');
   if (chartDesc) chartDesc.innerText = (view === 'monthly') ? '' : 'Shaded band indicates a ±10% range around the cumulative savings rate';
   
+  
+  clearChart();
+
   if (view === 'monthly') {
     renderMonthlyChart(months, state.categories || []);
     renderMonthlyTable(months, state.categories || []);
@@ -69,7 +72,7 @@ function pushStateToUrl(state) {
 
 function ensureAtLeastOneCategory(state) {
   if (!state.categories || !state.categories.length) {
-    state.categories = [{ name: 'wireless telecom', monthly_spend: 1000, medianRateDecimal: 0.14, start_month: 1 }];
+    state.categories = [defaultState.categories[0]];
   }
 }
 
@@ -340,7 +343,6 @@ function main() {
       url.searchParams.delete('state');
       // push the reset state so back will restore previous state
       window.history.pushState({}, '', url.toString());
-      clearChart();
       // reset months control to default
       const monthsEl = document.getElementById('months');
       if (monthsEl) monthsEl.value = defaultState.months;

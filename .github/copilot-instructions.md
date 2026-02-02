@@ -9,7 +9,7 @@ Big picture
 
 Key files to inspect
 - `index.html` — page structure, includes Chart.js CDN and `main.js`, expects `styles.css`.
-- `main.js` — form handling, builds data array, instantiates Chart.js on `#myChart`; mutate DOM IDs carefully (`chart-form`, `myChart`).
+- `main.js` — form handling, builds data array, instantiates Chart.js on `#scenarioChart`; mutate DOM IDs carefully (`chart-form`, `scenarioChart`).
 - `input.css` / `styles.css` — source vs built CSS; do not edit `styles.css` as the source of truth.
 - `tailwind.config.js` — content globs (`./index.html`, `./*.js`) and custom colors (e.g. `navyblue`, `navyblue-100`..).
 - `package.json` — minimal; no build scripts currently (devDependency `tailwindcss` present).
