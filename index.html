@@ -1,61 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:,">
     <title>Cost optimization - potential scenarios</title>
     <meta name="author" content="Brendan Roberts">
-    <meta name="description" content="Cost optimization insight calculator designed for accountants, controllers, and CFOs. It is intentionally neutral, conservative, and exploratory.">
+    <meta name="description"
+        content="Cost optimization insight calculator designed for accountants, controllers, and CFOs. It is intentionally neutral, conservative, and exploratory.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
-        .font-family-primary { font-family: "Libre Franklin", sans-serif; }
-        .bg-blue-500 { background: #1E5D8A; }
-        .bg-blue-600 { background: #12456C; }
-        .bg-blue-700 { background: #0B2F4A; }
-        .bg-grey-100 { background: #F6F7F9; }
-        .bg-grey-200 { background: #E4E6E8; }
-        .bg-grey-300 { background: #B8BDC3; }
-        .bg-grey-400 { background: #7A8087; }
-        .bg-grey-500 { background: #4A4F55; }
-        .bg-grey-600 { background: #2E2E2E; }
-        .cta-btn { color: #12456C; }
-        .active-nav-link { background: #0B2F4A; }
-        .nav-item:hover { background: #0B2F4A; }
-        .account-link:hover { background: #0B2F4A; }
-
-        /* report-mode styles */
-        .report-mode aside { display: none; }
-        .report-mode #chart-form, .report-mode .no-print { display: none !important; }
-        .report-mode #print-btn { display: inline-block !important; }
-        
-        /* FAQ accordion styles (centered) */
-        .faq-section { max-width: 48rem; margin-left: auto; margin-right: auto; }
-        .faq-item { border: 1px solid #e5e7eb; border-radius: 6px; background: #ffffff; overflow: hidden; }
-        .faq-button { width: 100%; text-align: left; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; font-weight: 600; }
-        .faq-content { padding: 12px 16px; display: none; font-size: 0.95rem; color: #333; }
-        .faq-icon { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9999px; background: #f3f4f6; }
-        
-        /* hide FAQ when generating report/PDF */
-        .report-mode .faq-section, .faq-section.no-print { display: none !important; }
-        
-        /* Tooltip for add-category examples */
-        .tooltip-wrapper { position: relative; display: inline-block; }
-        .tooltip-wrapper .tooltip-content { display: none; position: absolute; left: 0; top: calc(100% + 8px); width: 260px; background: #fff; color: #111; border: 1px solid #e5e7eb; padding: 10px; border-radius: 6px; box-shadow: 0 6px 18px rgba(16,24,40,0.08); z-index: 50; }
-        .tooltip-wrapper:hover .tooltip-content, .tooltip-wrapper:focus-within .tooltip-content { display: block; }
-        .tooltip-wrapper .tooltip-content ul { margin: 0 0 8px 16px; padding: 0; }
-        .tooltip-wrapper .tooltip-content li { margin-bottom: 4px; }
-    </style>
+    <link href="./main.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100 font-family-primary flex">
     <aside class="relative bg-grey-500 h-screen w-96 hidden sm:block shadow-xl overflow-y-auto">
         <div class="p-6 text-white">
             <h3 class="text-lg font-semibold mb-3">Expense Categories</h3>
-                <button id="aside-add-category" class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-2 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
-                        <i class="fas fa-plus mr-3"></i> Add Category
-                </button>
+            <button id="aside-add-category"
+                class="w-full bg-white cta-btn font-semibold py-2 mt-5 mb-2 rounded-br-lg rounded-bl-lg rounded-tr-lg rounded-tl-lg shadow-lg hover:shadow-xl hover:bg-gray-300 text-sm flex items-center justify-center">
+                <i class="fas fa-plus mr-3"></i> Add Category
+            </button>
             <div class="tooltip-wrapper">
                 <div class="text-xs text-white mt-2">Examples of commonly reviewed vendor expenses</div>
                 <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">
@@ -69,15 +34,16 @@
                         <li>Waste and recycling</li>
                         <li>Uniforms and linens</li>
                     </ul>
-                    <div style="font-size:12px;color:#6b7280;margin-top:6px;">Additional examples and guidance are available below.</div>
+                    <div style="font-size:12px;color:#6b7280;margin-top:6px;">Additional examples and guidance are
+                        available below.</div>
                 </div>
             </div>
-            
+
             <div id="categories-list" class="space-y-3 mt-4">
                 <!-- category rows rendered here -->
             </div>
         </div>
-        
+
         <!-- category controls rendered into #categories-list -->
     </aside>
 
@@ -85,36 +51,41 @@
         <div class="w-full overflow-x-hidden border-t flex flex-col">
             <main class="w-full flex-grow p-6">
                 <h1 class="text-3xl text-black pb-6">Cost Optimization — Scenario Analysis</h1>
-                <p id="intro-text" class="mb-6 text-md text-gray-700 italic">Illustrative scenarios showing potential cash flow impact from vendor spend optimization</p> 
-                
+                <p id="intro-text" class="mb-6 text-md text-gray-700 italic">Illustrative scenarios showing potential
+                    cash flow impact from vendor spend optimization</p>
+
                 <div class="flex flex-wrap mt-8">
                     <div class="w-full pr-0 lg:pr-2">
                         <p class="text-xl pb-3 flex items-center">
                             <!-- Controls -->
-                            <form id="chart-form" class="mb-6 flex flex-wrap items-center gap-4">
-                                <div class="flex items-center">
-                                    <label for="months" class="mr-2 text-sm font-medium">Months:</label>
-                                    <select id="months" name="months" class="border p-3 rounded-md text-sm">
-                                        <option value="36">36</option>
-                                        <option value="48">48</option>
-                                        <option value="60">60</option>
-                                        <option value="72">72</option>
+                        <form id="chart-form" class="mb-6 flex flex-wrap items-center gap-4">
+                            <div class="flex items-center">
+                                <label for="months" class="mr-2 text-sm font-medium">Months:</label>
+                                <select id="months" name="months" class="border p-3 rounded-md text-sm">
+                                    <option value="36">36</option>
+                                    <option value="48">48</option>
+                                    <option value="60">60</option>
+                                    <option value="72">72</option>
+                                </select>
+                                <div class="flex items-center ml-4">
+                                    <label for="view-mode" class="mr-2 text-sm font-medium">View:</label>
+                                    <select id="view-mode" name="view-mode" class="border p-3 rounded-md text-sm">
+                                        <option value="monthly">Monthly</option>
+                                        <option value="cumulative">Cumulative</option>
                                     </select>
-                                    <div class="flex items-center ml-4">
-                                        <label for="view-mode" class="mr-2 text-sm font-medium">View:</label>
-                                        <select id="view-mode" name="view-mode" class="border p-3 rounded-md text-sm">
-                                            <option value="monthly">Monthly</option>
-                                            <option value="cumulative">Cumulative</option>
-                                        </select>
-                                    </div>
                                 </div>
-                                
-                                <div class="flex-1 text-right flex items-center justify-end gap-2">
-                                    <button type="button" id="reset-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Reset</button>
-                                    <button type="button" id="bookmark-btn" class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Bookmark</button>
-                                    <button type="button" id="export-pdf-btn" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm no-print">Export PDF</button>
-                                </div>
-                            </form>
+                            </div>
+
+                            <div class="flex-1 text-right flex items-center justify-end gap-2">
+                                <button type="button" id="reset-btn"
+                                    class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Reset</button>
+                                <button type="button" id="bookmark-btn"
+                                    class="bg-gray-100 text-gray-800 px-3 py-2 rounded-md border text-sm no-print">Bookmark</button>
+                                <button type="button" id="export-pdf-btn"
+                                    class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm no-print">Export
+                                    PDF</button>
+                            </div>
+                        </form>
                         </p>
                         <div class="p-6 bg-white">
                             <div>
@@ -122,9 +93,9 @@
                             </div>
                             <p id="chart-desc" class="text-xs text-gray-500"></p>
                         </div>
-                    </div>        
+                    </div>
                 </div>
-            
+
                 <!-- report area (wrapped for printable/pdf export) -->
                 <div id="report-area">
                     <!-- schedule table -->
@@ -146,7 +117,9 @@
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>Expenses that sit below gross margin and are tied to ongoing vendor relationships often present the most opportunity. These costs tend to accumulate quietly over time and are rarely revisited unless there is a disruption.</p>
+                                <p>Expenses that sit below gross margin and are tied to ongoing vendor relationships
+                                    often present the most opportunity. These costs tend to accumulate quietly over time
+                                    and are rarely revisited unless there is a disruption.</p>
                                 <p class="mt-2">Common examples include:</p>
                                 <ul class="list-disc ml-6 mt-2">
                                     <li>Telecommunications</li>
@@ -162,7 +135,8 @@
                                     <li>Janitorial supplies</li>
                                     <li>Office supplies</li>
                                 </ul>
-                                <p class="mt-2">Results vary by organization, contract structure, and vendor landscape.</p>
+                                <p class="mt-2">Results vary by organization, contract structure, and vendor landscape.
+                                </p>
                             </div>
                         </div>
 
@@ -172,9 +146,16 @@
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>The initial review and adjustment phase often spans <b>4-8 weeks</b>. This is typically a one-time effort to align service levels and usage with actual needs, while revisiting pricing and contract terms based on current market conditions. <b>Then allow one invoice cycle to see revised pricing flow through.</b></p>
-                                <p class="mt-2">After that, the work shifts to </b>ongoing monitoring</b>. Vendor expenses are reviewed periodically, with adjustments made when usage, pricing, or service requirements drift over time. These follow-ups are usually incremental rather than disruptive.</p>
-                                <p class="mt-2">The ongoing effort is modest, but consistency matters. Small inefficiencies tend to accumulate if left unattended.</p>
+                                <p>The initial review and adjustment phase often spans <b>4-8 weeks</b>. This is
+                                    typically a one-time effort to align service levels and usage with actual needs,
+                                    while revisiting pricing and contract terms based on current market conditions.
+                                    <b>Then allow one invoice cycle to see revised pricing flow through.</b></p>
+                                <p class="mt-2">After that, the work shifts to </b>ongoing monitoring</b>. Vendor
+                                    expenses are reviewed periodically, with adjustments made when usage, pricing, or
+                                    service requirements drift over time. These follow-ups are usually incremental
+                                    rather than disruptive.</p>
+                                <p class="mt-2">The ongoing effort is modest, but consistency matters. Small
+                                    inefficiencies tend to accumulate if left unattended.</p>
                             </div>
                         </div>
 
@@ -184,9 +165,14 @@
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>Most organizations benefit from reviewing vendor expenses on a quarterly or semi-annual basis, depending on volatility and materiality.</p>
-                                <p class="mt-2">Highly variable services (e.g., usage-based or transactional costs) tend to warrant more frequent review, while stable, contract-based services can often be reviewed less often. The goal is not constant renegotiation, but timely detection of misalignment as usage, pricing, or service needs evolve.</p>
-                                <p class="mt-2">Regular review helps prevent small inefficiencies from compounding unnoticed.</p>
+                                <p>Most organizations benefit from reviewing vendor expenses on a quarterly or
+                                    semi-annual basis, depending on volatility and materiality.</p>
+                                <p class="mt-2">Highly variable services (e.g., usage-based or transactional costs) tend
+                                    to warrant more frequent review, while stable, contract-based services can often be
+                                    reviewed less often. The goal is not constant renegotiation, but timely detection of
+                                    misalignment as usage, pricing, or service needs evolve.</p>
+                                <p class="mt-2">Regular review helps prevent small inefficiencies from compounding
+                                    unnoticed.</p>
                             </div>
                         </div>
 
@@ -197,8 +183,11 @@
                             </button>
                             <div class="faq-content">
                                 <p>No. The scenarios shown are <b>illustrative</b>, not guarantees.</p>
-                                <p class="mt-2">In some cases, a review confirms that pricing, service levels, and usage are already well-aligned. That outcome should be viewed positively, as it validates that strong stewardship and market-appropriate pricing are already in place.</p>
-                                <p class="mt-2">The value of the process is not only identifying savings, but establishing confidence that vendor spend remains appropriate over time.</p>
+                                <p class="mt-2">In some cases, a review confirms that pricing, service levels, and usage
+                                    are already well-aligned. That outcome should be viewed positively, as it validates
+                                    that strong stewardship and market-appropriate pricing are already in place.</p>
+                                <p class="mt-2">The value of the process is not only identifying savings, but
+                                    establishing confidence that vendor spend remains appropriate over time.</p>
                             </div>
                         </div>
 
@@ -209,8 +198,12 @@
                             </button>
                             <div class="faq-content">
                                 <p>Not necessarily.</p>
-                                <p class="mt-2">In most cases, meaningful improvements can be achieved while retaining existing vendors by adjusting pricing, scope, or contract terms. Vendor changes are typically considered only when service requirements cannot be met competitively or when better-aligned alternatives exist.</p>
-                                <p class="mt-2">This tool does not assume disruption; it is designed to surface options and tradeoffs.</p>
+                                <p class="mt-2">In most cases, meaningful improvements can be achieved while retaining
+                                    existing vendors by adjusting pricing, scope, or contract terms. Vendor changes are
+                                    typically considered only when service requirements cannot be met competitively or
+                                    when better-aligned alternatives exist.</p>
+                                <p class="mt-2">This tool does not assume disruption; it is designed to surface options
+                                    and tradeoffs.</p>
                             </div>
                         </div>
                         <div class="faq-item">
@@ -219,9 +212,14 @@
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>Yes. Many organizations manage vendor reviews internally as part of regular financial oversight.</p>
-                                <p class="mt-2">The work is generally straightforward but detail-oriented, and it tends to compete with higher-priority responsibilities. As a result, reviews may rely heavily on vendor-provided information or focus primarily on pricing, rather than on whether services and usage remain well-matched to current needs.</p>
-                                <p class="mt-2">This tool is intended to support consistent, structured internal reviews by making scope, assumptions, and tradeoffs more explicit.</p>
+                                <p>Yes. Many organizations manage vendor reviews internally as part of regular financial
+                                    oversight.</p>
+                                <p class="mt-2">The work is generally straightforward but detail-oriented, and it tends
+                                    to compete with higher-priority responsibilities. As a result, reviews may rely
+                                    heavily on vendor-provided information or focus primarily on pricing, rather than on
+                                    whether services and usage remain well-matched to current needs.</p>
+                                <p class="mt-2">This tool is intended to support consistent, structured internal reviews
+                                    by making scope, assumptions, and tradeoffs more explicit.</p>
                             </div>
                         </div>
                         <div class="faq-item">
@@ -230,21 +228,29 @@
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>The scenarios are intended to support <b>internal discussion and decision-making</b>, not to serve as forecasts or commitments.</p>
-                                <p class="mt-2">Exported reports are best used as illustrative materials when evaluating options, prioritizing review efforts, or framing conversations with stakeholders. When shared externally, they should be presented as scenario-based analyses rather than promised outcomes.</p>
-                                <p class="mt-2">This tool is not designed to replace procurement systems, audits, or formal sourcing processes.</p>
+                                <p>The scenarios are intended to support <b>internal discussion and decision-making</b>,
+                                    not to serve as forecasts or commitments.</p>
+                                <p class="mt-2">Exported reports are best used as illustrative materials when evaluating
+                                    options, prioritizing review efforts, or framing conversations with stakeholders.
+                                    When shared externally, they should be presented as scenario-based analyses rather
+                                    than promised outcomes.</p>
+                                <p class="mt-2">This tool is not designed to replace procurement systems, audits, or
+                                    formal sourcing processes.</p>
                                 <p class="mt-2">Professional judgment remains essential.</p>
                             </div>
-                        </div>                        
+                        </div>
                         <div class="faq-item">
                             <button type="button" class="faq-button" aria-expanded="false">
                                 <span>Who created this tool?</span>
                                 <span class="faq-icon">+</span>
                             </button>
                             <div class="faq-content">
-                                <p>This tool was developed by a cost optimization practitioner as a standalone scenario exploration aid for finance professionals. It reflects a continuous vendor expense management approach, rather than a one-time sourcing or RFP exercise.</p>
+                                <p>This tool was developed by a cost optimization practitioner as a standalone scenario
+                                    exploration aid for finance professionals. It reflects a continuous vendor expense
+                                    management approach, rather than a one-time sourcing or RFP exercise.</p>
                                 <p class="mt-2">No data is collected, stored, or tracked.</p>
-                                <p class="mt-2">If you have questions about the assumptions or how ongoing vendor expense review is typically handled in practice, you're welcome to reach out:</p>
+                                <p class="mt-2">If you have questions about the assumptions or how ongoing vendor
+                                    expense review is typically handled in practice, you're welcome to reach out:</p>
                                 <p class="mt-2"><i>Brendan Roberts — brendan.roberts@schooleymitchell.com</i></p>
                             </div>
                         </div>
@@ -253,15 +259,19 @@
 
                 <!-- Footer -->
                 <footer class="w-full mt-8 py-4 bg-white text-center text-sm text-gray-700">
-                    This tool is provided as a thinking aid for finance professionals. No data is collected, stored, or shared.
+                    This tool is provided as a thinking aid for finance professionals. No data is collected, stored, or
+                    shared.
                 </footer>
             </main>
         </div>
     </div>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+        integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
-    <script type="module" src="./src/main.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script type="module" src="./src/main.js"></script>
 </body>
+
 </html>

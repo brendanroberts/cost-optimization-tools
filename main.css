@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css?family=Libre+Franklin:400,700&display=swap');
+
+.font-family-primary {
+    font-family: "Libre Franklin", sans-serif;
+}
+
+:root {
+    --navyblue-600: #12456c;
+    --navyblue-700: #0B2F4A;
+    --grey-500: #4A4F55;
+}
+
+.bg-blue-600 {
+    background: var(--navyblue-600);
+}
+
+.bg-blue-700 {
+    background: var(--navyblue-700);
+}
+
+.bg-grey-500 {
+    background: var(--grey-500);
+}
+
+.cta-btn {
+    color: var(--navyblue-600);
+}
+
+/* report-mode styles */
+.report-mode aside {
+    display: none;
+}
+
+.report-mode #chart-form,
+.report-mode .no-print {
+    display: none !important;
+}
+
+.report-mode #print-btn {
+    display: inline-block !important;
+}
+
+/* FAQ accordion styles (centered) */
+.faq-section {
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.faq-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.faq-button {
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.faq-content {
+    padding: 12px 16px;
+    display: none;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.faq-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: #f3f4f6;
+}
+
+/* hide FAQ when generating report/PDF */
+.report-mode .faq-section,
+.faq-section.no-print {
+    display: none !important;
+}
+
+/* Tooltip for add-category examples */
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip-wrapper .tooltip-content {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    width: 260px;
+    background: #fff;
+    color: #111;
+    border: 1px solid #e5e7eb;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(16, 24, 40, 0.08);
+    z-index: 50;
+}
+
+.tooltip-wrapper:hover .tooltip-content,
+.tooltip-wrapper:focus-within .tooltip-content {
+    display: block;
+}
+
+.tooltip-wrapper .tooltip-content ul {
+    margin: 0 0 8px 16px;
+    padding: 0;
+}
+
+.tooltip-wrapper .tooltip-content li {
+    margin-bottom: 4px;
+}
