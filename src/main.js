@@ -1,4 +1,4 @@
-import { defaultState } from './constants.js';
+import { getDefaultState } from './constants.js';
 import { aggregateCategories } from './calculations.js';
 import { renderCumulativeChart, renderMonthlyChart, clearChart } from './charts.js';
 import { generateCumulativeTableHTML, generateMonthlyTableHTML, reductionPercentTooltip } from './ui.js';
@@ -27,6 +27,7 @@ function renderMonthlyTable(months, categories) {
 
 function renderFromState(state) {
   if (!state) return;
+  const defaultState = getDefaultState();
   const months = state.months || defaultState.months;
   const view = state.view || defaultState.view;
   const titleEl = document.getElementById('table-title');
@@ -72,7 +73,7 @@ function pushStateToUrl(state) {
 
 function ensureAtLeastOneCategory(state) {
   if (!state.categories || !state.categories.length) {
-    state.categories = [defaultState.categories[0]];
+    state.categories = [getDefaultState().categories[0]];
   }
 }
 
@@ -260,13 +261,13 @@ function addCategoryToState(state, name = 'New Category', monthly_spend = 1000) 
 
 function loadFromState(state) {
   ensureAtLeastOneCategory(state);
-  document.getElementById('months').value = state.months || defaultState.months;
+  document.getElementById('months').value = state.months || getDefaultState().months;
   const viewEl = document.getElementById('view-mode');
   if (viewEl) viewEl.value = state.view || 'cumulative';
 }
 
 function collectStateFromUI(existingState) {
-  const months = parseInt(document.getElementById('months').value, 10) || defaultState.months;
+  const months = parseInt(document.getElementById('months').value, 10) || getDefaultState().months;
   const state = existingState || {};
   state.months = months;
   state.view = document.getElementById('view-mode')?.value || 'cumulative';
@@ -280,7 +281,7 @@ function collectStateFromUI(existingState) {
 }
 
 function initializeState() {
-  currentState = defaultState;
+  currentState = getDefaultState();
   pushStateToUrl(currentState);
   renderCategoryList(currentState);
   renderFromState(currentState);
@@ -313,7 +314,7 @@ function main() {
   const monthsSelect = document.getElementById('months');
   if (monthsSelect) {
     monthsSelect.addEventListener('change', (e) => {
-      const months = parseInt(e.target.value, 10) || defaultState.months;
+      const months = parseInt(e.target.value, 10) || getDefaultState().months;
       let state = getStateFromUrl() || {};
       state.months = months;
       if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
@@ -345,7 +346,7 @@ function main() {
       window.history.pushState({}, '', url.toString());
       // reset months control to default
       const monthsEl = document.getElementById('months');
-      if (monthsEl) monthsEl.value = defaultState.months;
+      if (monthsEl) monthsEl.value = getDefaultState().months;
       // clear categories list UI as well
       const list = document.getElementById('categories-list');
       if (list) list.innerHTML = '';

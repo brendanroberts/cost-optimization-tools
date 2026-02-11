@@ -1,7 +1,7 @@
 import { renderCumulativeChart, renderMonthlyChart } from './charts.js';
 import { generateCumulativeTableHTML, generateMonthlyTableHTML, renderReportIntro } from './ui.js';
 import { aggregateCategories } from './calculations.js';
-import { defaultState } from './constants.js';
+import { getDefaultState } from './constants.js';
 
 export const chartDimensions = { width: 680, height: 280 };
 
@@ -17,7 +17,7 @@ function createCanvas() {
 }
 
 export async function exportReport(state) {
-    const months = state.months || defaultState.months;
+    const months = state.months || getDefaultState().months;
     
     // compute cumulative datasets
     const agg = aggregateCategories(state.categories || [], months);
