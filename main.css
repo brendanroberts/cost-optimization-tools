@@ -5,9 +5,30 @@
 }
 
 :root {
+    --navyblue-50: #E6EDF5;
+    --navyblue-100: #AFC2DA;
+    --navyblue-200: #7D9BC0;
+    --navyblue-300: #4F82AB;
     --navyblue-600: #12456c;
     --navyblue-700: #0B2F4A;
+    --blue-900: #2E2E2E;
     --grey-500: #4A4F55;
+}
+
+.text-blue-50 {
+    color: var(--navyblue-50);
+}
+
+.text-blue-100 {
+    color: var(--navyblue-100);
+}
+
+.text-blue-200 {
+    color: var(--navyblue-200);
+}
+
+.text-blue-300 {
+    color: var(--navyblue-300);
 }
 
 .bg-blue-600 {
@@ -16,6 +37,10 @@
 
 .bg-blue-700 {
     background: var(--navyblue-700);
+}
+
+.bg-blue-900 {
+    background: var(--blue-900);
 }
 
 .bg-grey-500 {
