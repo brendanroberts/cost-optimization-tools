@@ -47,7 +47,7 @@ export const reductionPercentTooltip = '<div class="tooltip-wrapper">\
       <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
       <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
           <div class="text-sm">\
-              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category and starting point.\
+              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category.\
           </div>\
       </div>\
     </div>';

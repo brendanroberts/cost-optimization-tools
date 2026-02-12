@@ -9,122 +9,109 @@
   <meta name="description"
     content="A printable checklist for financial professionals to use for periodic reviews of healthy spending patterns with vendor expenses.">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-  <link href="./main.css" rel="stylesheet">
+  <link href="./../main.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 font-family-primary flex">
-  <div class="w-full flex flex-col h-screen overflow-y-auto">
-      <main class="w-full flex-grow p-6">
-        <header>
-          <h1 class="text-3xl text-black pb-6">Business Services Spend Checklist</h1>
-          <p id="intro-text" class="mb-6 text-md text-gray-700 italic">Use this checklist during routine financial reviews (Monthly, Quarterly, Pre-Budget)</p>
-        </header>
-        <div class="flex flex-wrap mt-8">
-          <div class="w-full pr-0 lg:pr-2">
-            <form>
-              <section>
-                <h2>Vendor Pricing &Contracts</h2>
+<body class="bg-gray-100 font-family-primary">
 
-                <label>
-                  <input type="checkbox" />
-                  Have contracts been reviewed for pricing changes, tariff impact, or service adjustments?
-                </label><br />
+  <nav class="bg-blue-700">
+    <div class="max-w-6xl px-4">
+      <div class="flex justify-between">
 
-                <label>
-                  <input type="checkbox" />
-                  Are recurring services billed at agreed-upon rates?
-                </label>
-              </section>
-
-              <section>
-                <h2>Service Delivery Verification</h2>
-
-                <label>
-                  <input type="checkbox" />
-                  Are all billed services delivered as expected?
-                </label><br />
-
-                <label>
-                  <input type="checkbox" />
-                  Are any services duplicated across departments?
-                </label>
-              </section>
-
-              <section>
-                <h2>Invoice Accuracy</h2>
-
-                <label>
-                  <input type="checkbox" />
-                  Are invoices checked for errors or duplicates?
-                </label><br />
-
-                <label>
-                  <input type="checkbox" />
-                  Are available discounts and credits applied consistently?
-                </label>
-              </section>
-              
-              <section>
-                <h2>Operational Drift</h2>
-
-                <label>
-                  <input type="checkbox" />
-                  Has staffing or process changes altered service usage?
-                </label><br />
-
-                <label>
-                  <input type="checkbox" />
-                  Are cost increases being tracked systematically?
-                </label>
-              </section>
-              <section>
-                <h2>Budget Health</h2>
-
-                <label>
-                  <input type="checkbox" />
-                  Are small inefficiencies impacting overall budget flexibility?
-                </label><br />
-
-                <label>
-                  <input type="checkbox" />
-                  Could discretionary funds be preserved for staffing or strategic initiatives?
-                </label>
-              </section>
-
-              <section>
-                <h2>How did you do?</h2>
-                <p>
-                  If you think your organization could benefit from an external margin oversight function, Schedule here: https://calendly.com/brendan-roberts-schooleymitchell/30min
-                </p>
-              </section>
-
-              <section>
-                <h2>Next Step</h2>
-                <p>
-                  If you think your organization could benefit from an external margin review,
-                  schedule a brief fit check:
-                </p>
-                <p>
-                  <a href="https://calendly.com/brendan-roberts-schooleymitchell/30min">
-                    Schedule abrief fit check:
-                </p>
-                <p>
-                  <a href="https://calendly.com/brendan-roberts-schooleymitchell/30min">
-                    Schedule a 15-minute review
-                  </a>
-                </p>
-              </section>
-
-            </form>
+        <div class="flex space-x-4">
+          <!-- primary nav -->
+          <div class="hidden md:flex items-center space-x-1">
+            <a href="/" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
+            <a href="/checklist" class="py-2 px-3 text-blue-100">Spend checklist</a>
           </div>
-          <footer>
-            <p>
-              This checklist is intended as a diagnostic tool, not a sales instrument.
-              Reviews are funded from savings identified. If no savings are produced, no fee is earned.
-            </p>
-          </footer>
         </div>
-      </main>
+      </div>
+    </div>
+  </nav>
+
+  <!-- content goes here -->
+  <div class="min-h-screen bg-gray-50  px-4">
+    <div class="mx-auto max-w-3xl bg-white shadow-sm rounded-lg p-10">
+
+      <header class="mb-10">
+          <h1 class="text-3xl text-black pb-4">Business Services Spend Checklist</h1>
+                    <p id="intro-text" class="mb-6 text-md text-gray-700 italic">Use this checklist during routine financial reviews
+          (Monthly, Quarterly, Pre-Budget)</p>
+      </header>
+
+      <form class="space-y-10">
+
+        <section class="space-y-4">
+          <p id="table-title" class="text-xl flex items-center font-semibold">Vendor Pricing &amp; Contracts</p>
+          
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Have contracts been reviewed for pricing changes, tariff impact, or service adjustments?</span>
+          </label>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are recurring services billed at agreed-upon rates?</span>
+          </label>
+        </section>
+
+        <section class="space-y-4">
+<p id="table-title" class="text-xl flex items-center font-semibold">Service Delivery Verification</p>
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are all billed services delivered as expected?</span>
+          </label>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are any services duplicated across departments?</span>
+          </label>
+        </section>
+
+        <section class="space-y-4">
+          <p id="table-title" class="text-xl flex items-center font-semibold">Invoice Accuracy</p>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are invoices checked for errors or duplicates?</span>
+          </label>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are available discounts and credits applied consistently?</span>
+          </label>
+        </section>
+
+        <section class="space-y-4">
+          <p id="table-title" class="text-xl flex items-center font-semibold">Operational Drift</p>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Has staffing or process changes altered service usage?</span>
+          </label>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are cost increases being tracked systematically?</span>
+          </label>
+        </section>
+
+        <section class="space-y-4">
+          <p id="table-title" class="text-xl flex items-center font-semibold">Budget Health</p>
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Are small inefficiencies impacting overall budget flexibility?</span>
+          </label>
+
+          <label class="flex gap-3 items-start">
+            <input type="checkbox" class="mt-1" />
+            <span>Could discretionary funds be preserved for staffing or strategic initiatives?</span>
+          </label>
+        </section>
+      </form>
+    </div>
   </div>
+
 </body>
+
 </html>
