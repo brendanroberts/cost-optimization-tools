@@ -385,6 +385,18 @@ function main() {
       await exportReport(state);
     });
   }
+  
+  const exportOnboardingBtn = document.getElementById('goto-onboarding-btn');
+  
+  if (exportOnboardingBtn) {
+    exportOnboardingBtn.addEventListener('click', () => {
+      const categories = currentState?.categories || getStateFromUrl()?.categories || [];
+      const s = encodeURIComponent(JSON.stringify({ categories })); // pass only categories to onboarding
+      const url = new URL(window.location.origin + '/onboarding');
+      url.searchParams.set('data', s);
+      window.location.href = url.toString();
+    });
+  }
 
   // Render on form submit
   document.getElementById('chart-form').addEventListener('submit', (e) => {
