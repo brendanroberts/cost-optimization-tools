@@ -4,12 +4,62 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="data:,">
-  <title>Spend checklist for business services</title>
+  <title>Printable spend checklist for business services</title>
   <meta name="author" content="Brendan Roberts">
   <meta name="description"
     content="A printable checklist for financial professionals to use for periodic reviews of healthy spending patterns with vendor expenses.">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
   <link href="./../main.css" rel="stylesheet">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Vendor Expense Review Checklist for Finance Professionals",
+      "description": "A printable checklist to support structured vendor expense reviews, invoice accuracy checks, and operational cost stewardship. Designed for accountants and finance professionals to use during periodic spending reviews.",
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Accounting and finance professionals"
+      },
+      "supply": [
+        {
+          "@type": "HowToSupply",
+          "name": "Printable checklist (browser print or PDF export)"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Vendor Pricing & Contracts",
+          "text": "Review vendor contracts for pricing changes, tariff impact, and service adjustments. Confirm recurring services are billed at agreed-upon rates."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Service Delivery Verification",
+          "text": "Verify billed services are delivered as expected and identify duplicate services across departments."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Invoice Accuracy",
+          "text": "Check invoices for errors, duplicates, and ensure discounts or credits are applied consistently."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Operational Drift",
+          "text": "Evaluate whether staffing or process changes altered service usage and confirm cost increases are tracked."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Budget Health",
+          "text": "Assess whether inefficiencies affect budget flexibility and whether funds could be preserved for strategic priorities."
+        }
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Brendan Roberts"
+      }
+    }
+  </script>
+
 </head>
 
 <body class="bg-gray-100 font-family-primary">
@@ -56,7 +106,7 @@
         </section>
 
         <section class="space-y-4">
-<p id="table-title" class="text-xl flex items-center font-semibold">Service Delivery Verification</p>
+          <p id="table-title" class="text-xl flex items-center font-semibold">Service Delivery Verification</p>
           <label class="flex gap-3 items-start">
             <input type="checkbox" class="mt-1" />
             <span>Are all billed services delivered as expected?</span>
