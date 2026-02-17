@@ -1,7 +1,5 @@
-/////////////////////////
-// STATE
-/////////////////////////
 
+const submissionUrl = 'https://ekdzs7kngsfvdtrjgg5xgj5a7q0nhhjn.lambda-url.us-west-2.on.aws/';
 let state = {
   scenarioCategories: [],
   selectedCategories: [],
@@ -174,10 +172,8 @@ Submit
       notes: notes.value,
     };
 
-    saveState();
-
     try {
-      await fetch("/relay", {
+      await fetch(submissionUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(state),
