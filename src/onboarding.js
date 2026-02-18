@@ -1,5 +1,6 @@
 import { submissionUrl } from './constants.js';
-let state = {
+let form, state = {
+  source: 'onboarding',
   scenarioCategories: [],
   selectedCategories: [],
   contact: {},
@@ -136,17 +137,17 @@ function stepSubmit() {
 
 <form id="submitForm" class="space-y-4">
 
-<input required placeholder="Name"
+<input required name="contactName" placeholder="Name"
 class="w-full border p-2 rounded" id="name">
 
-<input required type="email" placeholder="Email"
+<input required type="email" name="email" placeholder="Email"
 class="w-full border p-2 rounded" id="email">
 
-<textarea placeholder="Notes (optional)"
+<textarea name="notes" placeholder="Notes (optional)"
 class="w-full border p-2 rounded" id="notes"></textarea>
 
 <label class="flex gap-2 items-start">
-<input type="checkbox" id="ack" required>
+<input type="checkbox" name="ack" id="ack" required>
 <span>I understand the onboarding call will include reviewing invoices and documents</span>
 </label>
 
@@ -159,16 +160,20 @@ Submit
 </form>
 `);
 
-  document.getElementById("submitForm").onsubmit = async (e) => {
-    e.preventDefault();
+  form = document.getElementById("submitForm");
 
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData(form);
+    const json = Object.fromEntries(formData.entries());
     const btn = e.target.querySelector("button");
     btn.textContent = "Submitting…";
 
     state.contact = {
-      name: name.value,
-      email: email.value,
-      notes: notes.value,
+      name: json.contactName,
+      email: json.email,
+      notes: json.notes,
     };
 
     try {
@@ -184,7 +189,7 @@ Submit
 <p>I’ll contact you shortly to schedule onboarding.</p>
 </div>
 `);
-    } catch {
+    } catch (e) {
       document.getElementById("error").textContent =
         "Submission failed. Please retry or email directly.";
       document.getElementById("error").classList.remove("hidden");
