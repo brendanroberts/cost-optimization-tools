@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
+    <title>Section 125 Payroll Tax Savings | Reduce Employer FICA Costs</title>
+
+    <meta name="description"
+        content="Evaluate a Section 125 payroll tax savings program that reduces employer FICA costs while improving employee benefits — with no out-of-pocket expense." />
+
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="./../main.css" rel="stylesheet">
+    <style>
+        .big-money {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+    </style>
+    <meta property="og:title" content="Section 125 Payroll Tax Savings Program" />
+    <meta property="og:description" content="Reduce employer payroll taxes while enhancing employee benefits. Evaluate program fit and estimated annual savings." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://marginsteward.com/tax-savings" />
+    <meta name="robots" content="index, follow" />
+
+    <script type="application/ld+json">
+    {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "Section 125 Payroll Tax Savings Evaluation",
+    "description": "Professional evaluation of a Section 125 payroll tax savings program designed to reduce employer FICA taxes while improving employee benefits.",
+    "provider": {
+        "@type": "Organization",
+        "name": "Margin Steward",
+        "url": "https://marginsteward.com"
+    },
+    "areaServed": "US",
+    "serviceType": "Payroll tax savings consultation",
+    "url": "https://marginsteward.com/tax-savings"
+    }
+    </script>
+
+</head>
+
+<body class="bg-gray-50 bg-gray-100 font-family-primary">
+
+    <nav class="bg-blue-700">
+        <div class="max-w-6xl px-4">
+            <div class="flex justify-between">
+                <div class="flex space-x-4">
+                    <!-- primary nav -->
+                    <div class="hidden md:flex items-center space-x-1">
+                        <a href="/" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
+                        <a href="/payroll-savings/" class="py-2 px-3 text-blue-100">Payroll tax savings</a>
+                        <a href="/checklist" class="py-2 px-3 text-blue-50 hover:text-blue-200">Printable spend checklist</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-8 mt-8 space-y-8">
+
+        <h1 class="text-3xl text-black ">Payroll tax optimization that improves employee benefits — with compliant
+            implementation.</h1>
+        <h2 class="mb-6 text-md text-gray-700 italic">Designed to integrate with existing payroll and
+            health benefit systems without operational disruption.</h2>
+
+        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Structured payroll tax reduction program</li>
+            <li>Compatible with existing payroll providers</li>
+            <li>No employer out-of-pocket expense</li>
+            <li>Supports enhanced employee benefits</li>
+            <li>Designed for compliant implementation</li>
+
+        </ul>
+
+        <div class="space-y-4">
+
+            <label class="font-semibold">
+                Number of employees:
+                <span id="empDisplay">50</span>
+            </label>
+
+            <input type="range" id="empSlider" min="5" max="3000" value="50" class="w-full">
+
+            <div>
+                <p class="text-gray-600">Estimated employer FICA reduction:</p>
+                <div id="savings" class="big-money text-green-600"></div>
+            </div>
+
+        </div>
+
+        <div class="p-2">
+            <p>
+                Implementation is handled with payroll coordination and documentation designed to align with existing
+                accounting and compliance practices.
+            </p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded">
+            <p>
+                We increase employer profit, employee take-home pay, and benefit quality — at no cost.
+                Interested in evaluating whether this program is appropriate for your organization?
+            </p>
+        </div>
+
+
+        <form id="leadForm" class="space-y-4">
+
+            <input class="border p-2 w-full" placeholder="Name" required>
+
+            <input class="border p-2 w-full" placeholder="Company" required>
+
+            <input type="email" class="border p-2 w-full" placeholder="Email" required>
+
+            <button class="bg-blue-700 text-white px-4 py-2 rounded w-full">
+                Evaluate program fit
+            </button>
+
+        </form>
+
+        <div id="status" class="text-sm text-gray-600"></div>
+
+    </div>
+
+    <script>
+
+        const slider = document.getElementById("empSlider");
+        const empDisplay = document.getElementById("empDisplay");
+        const savingsEl = document.getElementById("savings");
+        const form = document.getElementById("leadForm");
+        const status = document.getElementById("status");
+
+        const RATE = 575;
+
+        function update() {
+            const employees = slider.value;
+            empDisplay.textContent = Number(employees).toLocaleString();
+
+            const total = employees * RATE;
+
+            savingsEl.textContent =
+                total.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    maximumFractionDigits: 0
+                });
+        }
+
+        slider.addEventListener("input", update);
+        update();
+
+        form.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            status.textContent = "Sending...";
+
+            try {
+                await fetch("YOUR_LAMBDA_URL", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        type: "fica_lead",
+                        employees: slider.value
+                    })
+                });
+
+                status.textContent = "Thanks — we'll contact you shortly.";
+                form.reset();
+
+            } catch {
+                status.textContent = "Submission failed. Please email directly.";
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
