@@ -1,5 +1,4 @@
-
-const submissionUrl = 'https://ekdzs7kngsfvdtrjgg5xgj5a7q0nhhjn.lambda-url.us-west-2.on.aws/';
+import { submissionUrl } from './constants.js';
 let state = {
   scenarioCategories: [],
   selectedCategories: [],
@@ -98,8 +97,8 @@ function stepPrep() {
 <div class="space-y-3 text-gray-700 mb-6">
 <p>After submission:</p>
 <ul class="list-disc ml-6">
-<li>I’ll contact you to schedule an onboarding call</li>
-<li>We’ll review invoices and documents</li>
+<li>I'll contact you to schedule an onboarding call</li>
+<li>We'll review invoices and documents</li>
 <li>Service agreement + authorization signing</li>
 </ul>
 </div>

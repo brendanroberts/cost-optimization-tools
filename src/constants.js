@@ -19,6 +19,8 @@ export const PALETTE = {
   'accent-yellow': '#F2C94C'
 };
 
+export const submissionUrl = 'https://ekdzs7kngsfvdtrjgg5xgj5a7q0nhhjn.lambda-url.us-west-2.on.aws/';
+
 export function getDefaultState() {
   return {
     months: 36,
