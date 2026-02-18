@@ -35,8 +35,11 @@ function main() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          type: "fica_lead",
+          source: "fica-savings",
           employees: slider.value,
+          contactName: form.contactName.value,
+          company: form.company.value,
+          email: form.email.value,
         }),
       });
 
