@@ -392,7 +392,7 @@ function main() {
     exportOnboardingBtn.addEventListener('click', () => {
       const categories = currentState?.categories || getStateFromUrl()?.categories || [];
       const s = encodeURIComponent(JSON.stringify({ categories })); // pass only categories to onboarding
-      const url = new URL(window.location.origin + '/onboarding');
+      const url = new URL(window.location.origin + '/preparation-checklist');
       url.searchParams.set('data', s);
       window.location.href = url.toString();
     });
