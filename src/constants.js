@@ -23,8 +23,8 @@ export const submissionUrl = 'https://ekdzs7kngsfvdtrjgg5xgj5a7q0nhhjn.lambda-ur
 
 export function getDefaultState() {
   return {
-    months: 36,
-    view: 'monthly',
+    months: 12,
+    view: 'summary',
     categories: [
       { name: 'Wireless telecom', monthly_spend: 3000, medianRateDecimal: 0.14, start_month: 1 },
       { name: 'Wireline telecom', monthly_spend: 4000, medianRateDecimal: 0.14, start_month: 2 },

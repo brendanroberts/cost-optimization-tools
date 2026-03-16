@@ -1,5 +1,5 @@
-import { renderCumulativeChart, renderMonthlyChart } from './charts.js';
-import { generateCumulativeTableHTML, generateMonthlyTableHTML, renderReportIntro } from './ui.js';
+import { renderCumulativeChart } from './charts.js';
+import { generateCumulativeTableHTML, generateMonthlyTableHTML, generateSummaryHTML, renderReportIntro } from './ui.js';
 import { aggregateCategories } from './calculations.js';
 import { getDefaultState } from './constants.js';
 
@@ -22,28 +22,22 @@ export async function exportReport(state) {
     // compute cumulative datasets
     const agg = aggregateCategories(state.categories || [], months);
 
-    // render temporary canvases in the current window and capture images
-    const cumCanvas = createCanvas()
-    const monCanvas = createCanvas();
+    // render temporary canvas in the current window and capture image
+    const cumCanvas = createCanvas();
 
     // attach to DOM so Chart.js can render reliably
     document.body.appendChild(cumCanvas);
-    document.body.appendChild(monCanvas);
 
     const cumChart = renderCumulativeChart(months, agg.low, agg.median, agg.high, cumCanvas, true);
-    const monChart = renderMonthlyChart(months, state.categories || [], monCanvas, true);
 
     // allow render
     await new Promise(r => setTimeout(r, 250));
 
     const cumDataUrl = cumCanvas.toDataURL('image/png', 0.98);
-    const monDataUrl = monCanvas.toDataURL('image/png', 0.98);
 
-    // destroy temp charts and remove canvases
+    // destroy temp chart and remove canvas
     try { if (cumChart && typeof cumChart.destroy === 'function') cumChart.destroy(); } catch (e) {}
-    try { if (monChart && typeof monChart.destroy === 'function') monChart.destroy(); } catch (e) {}
     try { cumCanvas.remove(); } catch (e) {}
-    try { monCanvas.remove(); } catch (e) {}
 
     // open a new window and write the printable report HTML into it
     const win = window.open('', '_blank');
@@ -75,9 +69,9 @@ export async function exportReport(state) {
 <body>\
 <h1>Cost optimization - potential scenarios</h1>\
 <div id="intro" class="intro">${renderReportIntro(state)}</div>\
-<h2>By Month</h2>\
-<img class="chart" src="${monDataUrl}" height="${chartDimensions.height}" />\
-<h2>Savings Breakdown</h2>\
+<h2>Monthly Savings at Full Optimization</h2>\
+${generateSummaryHTML(state.categories || [])}\
+<h2 class="break-before">Savings Breakdown</h2>\
 ${generateMonthlyTableHTML(months, state.categories || [])}\
 <h2 class="break-before">Cumulative Savings</h2>\
 <img class="chart" src="${cumDataUrl}" height="${chartDimensions.height}" />\

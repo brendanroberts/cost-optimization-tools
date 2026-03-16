@@ -1,7 +1,7 @@
 import { getDefaultState } from './constants.js';
 import { aggregateCategories } from './calculations.js';
 import { renderCumulativeChart, renderMonthlyChart, clearChart } from './charts.js';
-import { generateCumulativeTableHTML, generateMonthlyTableHTML, reductionPercentTooltip } from './ui.js';
+import { generateCumulativeTableHTML, generateMonthlyTableHTML, generateSummaryHTML, reductionPercentTooltip } from './ui.js';
 import { exportReport } from './pdf.js';
 
 let currentState = null;
@@ -29,20 +29,29 @@ function renderFromState(state) {
   if (!state) return;
   const defaultState = getDefaultState();
   const months = state.months || defaultState.months;
-  const view = state.view || defaultState.view;
+  // treat legacy 'monthly' view as 'summary'
+  const rawView = state.view || defaultState.view;
+  const view = rawView === 'monthly' ? 'summary' : rawView;
+
   const titleEl = document.getElementById('table-title');
-  if (titleEl) titleEl.innerText = (view === 'monthly') ? 'Monthly Savings Breakdown' : 'Cumulative Savings';
-  
   const chartDesc = document.getElementById('chart-desc');
-  if (chartDesc) chartDesc.innerText = (view === 'monthly') ? '' : 'Shaded band indicates a ±10% range around the cumulative savings rate';
-  
-  
+  const chartContainer = document.getElementById('chart-container');
+  const summaryBlock = document.getElementById('summary-block');
+
   clearChart();
 
-  if (view === 'monthly') {
-    renderMonthlyChart(months, state.categories || []);
+  if (view === 'summary') {
+    if (chartContainer) chartContainer.style.display = 'none';
+    if (summaryBlock) summaryBlock.innerHTML = generateSummaryHTML(state.categories || []);
+    if (summaryBlock) summaryBlock.style.display = '';
+    if (chartDesc) chartDesc.innerText = '';
+    if (titleEl) titleEl.innerText = 'Monthly Savings Breakdown';
     renderMonthlyTable(months, state.categories || []);
   } else {
+    if (chartContainer) chartContainer.style.display = '';
+    if (summaryBlock) summaryBlock.style.display = 'none';
+    if (chartDesc) chartDesc.innerText = 'Shaded band indicates a ±10% range around the cumulative savings rate';
+    if (titleEl) titleEl.innerText = 'Cumulative Savings';
     const agg = aggregateCategories(state.categories || [], months);
     renderCumulativeChart(months, agg.low, agg.median, agg.high);
     renderCumulativeTable(months, agg.low, agg.median, agg.high);
@@ -263,14 +272,15 @@ function loadFromState(state) {
   ensureAtLeastOneCategory(state);
   document.getElementById('months').value = state.months || getDefaultState().months;
   const viewEl = document.getElementById('view-mode');
-  if (viewEl) viewEl.value = state.view || 'cumulative';
+  const resolvedView = (state.view === 'monthly') ? 'summary' : (state.view || 'summary');
+  if (viewEl) viewEl.value = resolvedView;
 }
 
 function collectStateFromUI(existingState) {
   const months = parseInt(document.getElementById('months').value, 10) || getDefaultState().months;
   const state = existingState || {};
   state.months = months;
-  state.view = document.getElementById('view-mode')?.value || 'cumulative';
+  state.view = document.getElementById('view-mode')?.value || 'summary';
   // if categories already defined (from URL), keep them; otherwise try to use modal inputs
   if (!state.categories || !state.categories.length) {
     const name = document.getElementById('modal-category')?.value || 'wireless telecom';

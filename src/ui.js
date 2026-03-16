@@ -43,6 +43,28 @@ function escapeHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+export function generateSummaryHTML(categories) {
+  const totalMonthly = (categories || []).reduce((sum, cat) => {
+    return sum + (Number(cat.monthly_spend) || 0) * (cat.medianRateDecimal ?? 0.14);
+  }, 0);
+
+  const rows = (categories || []).map(cat => {
+    const monthlySavings = Math.round((Number(cat.monthly_spend) || 0) * (cat.medianRateDecimal ?? 0.14));
+    return `<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; color: #374151;">
+      <span>${escapeHtml(cat.name || 'Category')}</span>
+      <span>${formatUSD(monthlySavings)}</span>
+    </div>`;
+  }).join('');
+
+  return `<div style="padding: 24px 0;">
+  <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 4px;">Monthly savings at full optimization</p>
+  <p style="font-size: 3rem; font-weight: 700; color: #111827; line-height: 1.1;">${formatUSD(Math.round(totalMonthly))}</p>
+  <div style="margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+    ${rows}
+  </div>
+</div>`;
+}
+
 export const reductionPercentTooltip = '<div class="tooltip-wrapper">\
       <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
       <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
