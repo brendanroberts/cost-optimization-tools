@@ -315,11 +315,11 @@ function main() {
   if (monthsSelect) {
     monthsSelect.addEventListener('change', (e) => {
       const months = parseInt(e.target.value, 10) || getDefaultState().months;
-      let state = getStateFromUrl() || {};
-      state.months = months;
-      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
-      pushStateToUrl(state);
-      renderFromState(state);
+      currentState = currentState || getStateFromUrl() || {};
+      currentState.months = months;
+      if (!currentState.categories || !currentState.categories.length) currentState = collectStateFromUI(currentState);
+      pushStateToUrl(currentState);
+      renderFromState(currentState);
     });
   }
 
@@ -328,11 +328,11 @@ function main() {
   if (viewSelect) {
     viewSelect.addEventListener('change', (e) => {
       const view = e.target.value || 'cumulative';
-      let state = getStateFromUrl() || {};
-      state.view = view;
-      if (!state.categories || !state.categories.length) state = collectStateFromUI(state);
-      pushStateToUrl(state);
-      renderFromState(state);
+      currentState = currentState || getStateFromUrl() || {};
+      currentState.view = view;
+      if (!currentState.categories || !currentState.categories.length) currentState = collectStateFromUI(currentState);
+      pushStateToUrl(currentState);
+      renderFromState(currentState);
     });
   }
 
