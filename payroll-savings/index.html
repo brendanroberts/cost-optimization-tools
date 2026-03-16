@@ -36,7 +36,7 @@
         "url": "https://marginsteward.com"
     },
     "areaServed": "US",
-    "serviceType": "Payroll tax savings consultation",
+    "serviceType": "Payroll tax savings",
     "url": "https://marginsteward.com/tax-savings"
     }
     </script>
@@ -52,7 +52,7 @@
                     <!-- primary nav -->
                     <div class="hidden md:flex items-center space-x-1">
                         <a href="/" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
-                        <a href="/payroll-savings/" class="py-2 px-3 text-blue-100">Payroll tax savings</a>
+                        <a href="/payroll-savings/" class="py-2 px-3 text-blue-100">Section 125 savings</a>
                         <a href="/checklist" class="py-2 px-3 text-blue-50 hover:text-blue-200">Printable spend checklist</a>
                     </div>
                 </div>
@@ -62,21 +62,66 @@
 
     <div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-8 mt-8 space-y-8">
 
-        <h1 class="text-3xl text-black ">Payroll tax optimization that improves employee benefits — with compliant
-            implementation.</h1>
-        <h2 class="mb-6 text-md text-gray-700 italic">Designed to integrate with existing payroll and
-            health benefit systems without operational disruption.</h2>
+        <h1 class="text-3xl text-black">Section 125 Plans — Employer FICA Savings</h1>
 
-        <ul class="list-disc ml-6 text-gray-700 space-y-1">
-            <li>Structured payroll tax reduction program</li>
-            <li>Compatible with existing payroll providers</li>
-            <li>No employer out-of-pocket expense</li>
-            <li>Supports enhanced employee benefits</li>
-            <li>Designed for compliant implementation</li>
+        <p class="text-gray-700">A Section 125 cafeteria plan allows employees to elect certain benefits using
+        pre-tax payroll dollars. Because those elections reduce taxable wages, the
+        employer pays FICA taxes on a lower payroll base — generating a direct
+        reduction in employer payroll tax expense.</p>
 
-        </ul>
+        <p class="text-gray-700">The savings are structural, not discretionary. They flow from plan design and
+        payroll coordination rather than from negotiation or vendor switching. For
+        businesses with stable headcount and existing benefit programs, this is often
+        an underutilized lever that warrants a closer look.</p>
+
+        <div class="space-y-6">
+            <h2 class="text-xl font-semibold text-black">What Makes This Worth Reviewing</h2>
+
+            <div>
+                <p class="font-semibold text-gray-900">Plan eligibility</p>
+                <p class="text-gray-700">Section 125 plans are available to most private-sector employers regardless
+                of size. Eligibility depends on business structure and existing benefit
+                offerings. S-corp owners and sole proprietors are generally excluded from
+                participation, though their employees are not.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-900">Compatibility with existing payroll and benefits</p>
+                <p class="text-gray-700">Implementation works alongside existing payroll providers and health benefit
+                plans. It does not typically require changing carriers, benefit structures,
+                or payroll systems — only adding the plan document and adjusting how
+                elections are processed.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-900">Compliance requirements</p>
+                <p class="text-gray-700">A compliant Section 125 plan requires a formal plan document, annual
+                nondiscrimination testing, and consistent administration. These are
+                straightforward for most employers but should be reviewed by a qualified
+                plan administrator before implementation.</p>
+            </div>
+
+            <div>
+                <p class="font-semibold text-gray-900">Savings profile</p>
+                <p class="text-gray-700">Employer savings are a function of headcount and average benefit election
+                amounts. The relationship is approximately linear — more participating
+                employees at higher election levels produce proportionally larger FICA
+                reductions. Savings are realized each payroll period and compound across the
+                plan year.</p>
+            </div>
+        </div>
 
         <div class="space-y-4">
+
+            <h2 class="text-xl font-semibold text-black">Estimate Employer FICA Savings</h2>
+
+            <p class="text-gray-700">The calculator below estimates annual employer FICA tax savings based on
+            employee headcount. It assumes a standard benefit election amount per
+            participating employee and applies the current employer FICA rate.</p>
+
+            <p class="text-gray-700">Use this to frame a rough order of magnitude for a client conversation. Actual
+            savings depend on participation rates, employee eligibility, and plan
+            administration.</p>
 
             <label class="font-semibold">
                 Number of employees:
@@ -92,35 +137,24 @@
 
         </div>
 
-        <div class="p-2">
-            <p>
-                Implementation is handled with payroll coordination and documentation designed to align with existing
-                accounting and compliance practices.
-            </p>
+        <div class="text-gray-700 space-y-3">
+            <p>Results shown are illustrative. They assume full employee participation at a
+            standard election amount, which is rarely the case in practice. Actual
+            outcomes are typically lower and depend on:</p>
+            <ul class="list-disc ml-6 space-y-1">
+                <li>The percentage of employees who elect to participate</li>
+                <li>Individual election amounts, which vary by benefit type and employee situation</li>
+                <li>Whether the employer's workforce structure qualifies under nondiscrimination testing requirements</li>
+            </ul>
+            <p>A preliminary review of headcount, benefit structure, and payroll setup is
+            the appropriate next step before drawing conclusions from this estimate.</p>
         </div>
-        <div class="bg-blue-50 p-4 rounded">
-            <p>
-                We increase employer profit, employee take-home pay, and benefit quality — at no cost.
-                Interested in evaluating whether this program is appropriate for your organization?
-            </p>
-        </div>
 
+        <p class="text-gray-700">This page is one of several cost category resources on Margin Steward. To
+        model Section 125 savings alongside other vendor and operational cost
+        opportunities, use the scenario tool.</p>
 
-        <form id="leadForm" class="space-y-4">
-
-            <input class="border p-2 w-full" name="contactName" placeholder="Name" required>
-
-            <input class="border p-2 w-full" name="company" placeholder="Company" required>
-
-            <input type="email" class="border p-2 w-full" name="email" placeholder="Email" required>
-
-            <button class="bg-blue-700 text-white px-4 py-2 rounded w-full">
-                Evaluate program fit
-            </button>
-
-        </form>
-
-        <div id="status" class="text-sm text-gray-600"></div>
+        <p><a href="/" class="text-blue-700 hover:underline">Cost Optimization Scenario Tool →</a></p>
 
     </div>
 

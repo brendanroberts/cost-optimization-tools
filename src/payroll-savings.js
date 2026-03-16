@@ -25,6 +25,8 @@ function main() {
   slider.addEventListener("input", update);
   update();
 
+  if (!form) return;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
