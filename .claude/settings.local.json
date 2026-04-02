@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "WebFetch(domain:humornama.com)",
+      "Bash(curl:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

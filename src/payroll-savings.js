@@ -1,56 +1,31 @@
-import { submissionUrl } from "./constants.js";
-
 const slider = document.getElementById("empSlider");
 const empDisplay = document.getElementById("empDisplay");
-const savingsEl = document.getElementById("savings");
-const form = document.getElementById("leadForm");
-const status = document.getElementById("status");
 
-const RATE = 575;
+const EMPLOYEE_TAKEHOME = 2544;
+const EMPLOYER_FICA = 574;
+const EMPLOYER_PREMIUM = 1798;
 
-function update() {
-  const employees = slider.value;
-  empDisplay.textContent = Number(employees).toLocaleString();
-
-  const total = employees * RATE;
-
-  savingsEl.textContent = total.toLocaleString("en-US", {
+const fmt = (n) =>
+  n.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   });
+
+function update() {
+  const employees = Number(slider.value);
+  empDisplay.textContent = employees.toLocaleString();
+
+  document.getElementById("takehome-per").textContent = fmt(EMPLOYEE_TAKEHOME);
+  document.getElementById("takehome-total").textContent = fmt(EMPLOYEE_TAKEHOME * employees);
+  document.getElementById("fica-per").textContent = fmt(EMPLOYER_FICA);
+  document.getElementById("fica-total").textContent = fmt(EMPLOYER_FICA * employees);
+  document.getElementById("premium-per").textContent = fmt(EMPLOYER_PREMIUM);
+  document.getElementById("premium-total").textContent = fmt(EMPLOYER_PREMIUM * employees);
+  document.getElementById("employer-total").textContent = fmt((EMPLOYER_FICA + EMPLOYER_PREMIUM) * employees);
 }
 
-function main() {
+document.addEventListener("DOMContentLoaded", () => {
   slider.addEventListener("input", update);
   update();
-
-  if (!form) return;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    status.textContent = "Sending...";
-
-    try {
-      await fetch(submissionUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: "fica-savings",
-          employees: slider.value,
-          contactName: form.contactName.value,
-          company: form.company.value,
-          email: form.email.value,
-        }),
-      });
-
-      status.textContent = "Thanks — we'll contact you shortly.";
-      form.reset();
-    } catch {
-      status.textContent = "Submission failed. Please email directly.";
-    }
-  });
-}
-
-document.addEventListener("DOMContentLoaded", main);
+});

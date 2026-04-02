@@ -31,7 +31,7 @@ function render() {
   if (!data || !data.categories || !data.categories.length) {
     app.innerHTML = `
       <div class="text-gray-600 mt-4">
-        <p>No scenario data found. <a href="/" class="text-blue-600 underline">Return to the scenario tool</a> and click "Generate My Preparation Checklist" to generate this page.</p>
+        <p>No scenario data found. <a href="/scenario" class="text-blue-600 underline">Return to the scenario tool</a> and click "Generate My Preparation Checklist" to generate this page.</p>
       </div>`;
     return;
   }
