@@ -19,6 +19,9 @@ function update() {
   document.getElementById("takehome-total").textContent = fmt(EMPLOYEE_TAKEHOME * employees);
   document.getElementById("fica-per").textContent = fmt(EMPLOYER_FICA);
   document.getElementById("fica-total").textContent = fmt(EMPLOYER_FICA * employees);
+
+  const combinedEl = document.getElementById("combined-total");
+  if (combinedEl) combinedEl.textContent = fmt((EMPLOYEE_TAKEHOME + EMPLOYER_FICA) * employees);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

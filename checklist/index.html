@@ -4,11 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="data:,">
-  <title>Printable spend checklist for business services</title>
+  <title>Business Services Spend Checklist | Margin Steward</title>
   <meta name="author" content="Brendan Roberts">
-  <meta name="description"
-    content="A printable checklist for financial professionals to use for periodic reviews of healthy spending patterns with vendor expenses.">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <meta name="description" content="A printable checklist for financial professionals to use for periodic reviews of healthy spending patterns with vendor expenses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
   <link href="./../main.css" rel="stylesheet">
   <script type="application/ld+json">
     {
@@ -59,109 +60,87 @@
       }
     }
   </script>
-
 </head>
 
-<body class="bg-gray-100 font-family-primary">
+<body>
 
-  <nav class="bg-blue-700">
-    <div class="max-w-6xl px-4">
-      <div class="flex justify-between">
-
-        <div class="flex space-x-4">
-          <!-- primary nav -->
-          <div class="hidden md:flex items-center space-x-1">
-            <a href="/scenario" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
-            <a href="/payroll-savings/" class="py-2 px-3 text-blue-50 hover:text-blue-200">Payroll tax savings</a>
-            <a href="/checklist" class="py-2 px-3 text-blue-100">Printable spend checklist</a>
-          </div>
-        </div>
-      </div>
-    </div>
+  <nav>
+    <a href="/" class="wordmark">Margin Steward</a>
+    <ul class="nav-links">
+      <li><a href="/payroll-savings/" class="nav-link">Section 125</a></li>
+      <li><a href="/scenario" class="nav-link">Scenario</a></li>
+      <li><a href="/checklist" class="nav-link">Checklist</a></li>
+    </ul>
   </nav>
 
-  <!-- content goes here -->
-  <div class="min-h-screen bg-gray-50  px-4">
-    <div class="mx-auto max-w-3xl bg-white shadow-sm rounded-lg p-10">
+  <div class="content-container">
 
-      <header class="mb-10">
-          <h1 class="text-3xl text-black pb-4">Business Services Spend Checklist</h1>
-                    <p id="intro-text" class="mb-6 text-md text-gray-700 italic">Use this checklist during routine financial reviews
-          (Monthly, Quarterly, Pre-Budget)</p>
-      </header>
+    <h1>Business Services Spend Checklist</h1>
+    <p class="page-subtitle">Use during routine financial reviews — monthly, quarterly, or pre-budget.</p>
 
-      <form class="space-y-10">
-
-        <section class="space-y-4">
-          <p id="table-title" class="text-xl flex items-center font-semibold">Vendor Pricing &amp; Contracts</p>
-          
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Have contracts been reviewed for pricing changes, tariff impact, or service adjustments?</span>
-          </label>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are recurring services billed at agreed-upon rates?</span>
-          </label>
-        </section>
-
-        <section class="space-y-4">
-          <p id="table-title" class="text-xl flex items-center font-semibold">Service Delivery Verification</p>
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are all billed services delivered as expected?</span>
-          </label>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are any services duplicated across departments?</span>
-          </label>
-        </section>
-
-        <section class="space-y-4">
-          <p id="table-title" class="text-xl flex items-center font-semibold">Invoice Accuracy</p>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are invoices checked for errors or duplicates?</span>
-          </label>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are available discounts and credits applied consistently?</span>
-          </label>
-        </section>
-
-        <section class="space-y-4">
-          <p id="table-title" class="text-xl flex items-center font-semibold">Operational Drift</p>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Has staffing or process changes altered service usage?</span>
-          </label>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are cost increases being tracked systematically?</span>
-          </label>
-        </section>
-
-        <section class="space-y-4">
-          <p id="table-title" class="text-xl flex items-center font-semibold">Budget Health</p>
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Are small inefficiencies impacting overall budget flexibility?</span>
-          </label>
-
-          <label class="flex gap-3 items-start">
-            <input type="checkbox" class="mt-1" />
-            <span>Could discretionary funds be preserved for staffing or strategic initiatives?</span>
-          </label>
-        </section>
-      </form>
+    <div class="checklist-section">
+      <h3>Vendor Pricing &amp; Contracts</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-1">
+        <label for="item-1">Have contracts been reviewed for pricing changes, tariff impact, or service adjustments?</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-2">
+        <label for="item-2">Are recurring services billed at agreed-upon rates?</label>
+      </div>
     </div>
+
+    <div class="checklist-section">
+      <h3>Service Delivery Verification</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-3">
+        <label for="item-3">Are all billed services delivered as expected?</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-4">
+        <label for="item-4">Are any services duplicated across departments?</label>
+      </div>
+    </div>
+
+    <div class="checklist-section">
+      <h3>Invoice Accuracy</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-5">
+        <label for="item-5">Are invoices checked for errors or duplicates?</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-6">
+        <label for="item-6">Are available discounts and credits applied consistently?</label>
+      </div>
+    </div>
+
+    <div class="checklist-section">
+      <h3>Operational Drift</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-7">
+        <label for="item-7">Has staffing or process changes altered service usage?</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-8">
+        <label for="item-8">Are cost increases being tracked systematically?</label>
+      </div>
+    </div>
+
+    <div class="checklist-section">
+      <h3>Budget Health</h3>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-9">
+        <label for="item-9">Are small inefficiencies impacting overall budget flexibility?</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="item-10">
+        <label for="item-10">Could discretionary funds be preserved for staffing or strategic initiatives?</label>
+      </div>
+    </div>
+
   </div>
+
+  <footer><!-- extensible — no content at this time --></footer>
 
 </body>
 

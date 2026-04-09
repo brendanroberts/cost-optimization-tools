@@ -6,63 +6,55 @@
     <link rel="icon" href="data:,">
     <title>Margin Steward</title>
     <meta name="author" content="Brendan Roberts">
-    <meta name="description"
-        content="A resource for accounting and finance professionals who want to make vendor cost optimization quantifiable and presentable for their clients.">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <meta name="description" content="A resource for accounting and finance professionals who want to make vendor cost optimization quantifiable and presentable for their clients.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link href="./main.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 font-family-primary">
+<body>
 
-    <nav class="bg-blue-700">
-        <div class="max-w-6xl px-4">
-            <div class="flex justify-between">
-                <div class="flex space-x-4">
-                    <div class="hidden md:flex items-center space-x-1">
-                        <a href="/scenario" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
-                        <a href="/payroll-savings/" class="py-2 px-3 text-blue-50 hover:text-blue-200">Payroll tax savings</a>
-                        <a href="/checklist" class="py-2 px-3 text-blue-50 hover:text-blue-200">Printable spend checklist</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <nav>
+        <a href="/" class="wordmark">Margin Steward</a>
+        <ul class="nav-links">
+            <li><a href="/payroll-savings/" class="nav-link">Section 125</a></li>
+            <li><a href="/scenario" class="nav-link">Scenario</a></li>
+            <li><a href="/checklist" class="nav-link">Checklist</a></li>
+        </ul>
     </nav>
 
-    <div class="max-w-2xl mx-auto px-6 py-16">
-        <p class="text-4xl font-semibold text-gray-900 mb-6 leading-tight">Businesses have a natural tendency to leak money.</p>
-        
-        <p class="text-3xl font-semibold text-gray-900 mb-6 leading-tight">Margin Steward is a resource for accounting and finance
-        professionals who notice this — and want to do something about it for their
-        clients.</p>
+    <div class="content-container">
 
-        <p class="text-lg text-gray-600 mb-6">Most of this is already suspected. Waste hauling contracts commonly run three
-        years, auto-renew on 60-day windows, and carry stiff penalties for early
-        changes. Telecom lines accumulate. Shipping rates drift. The tools here are
-        designed to make these patterns quantifiable and presentable — so the
-        conversation moves from suspicion to specifics. A recovered dollar reaches
-        the bottom line intact. New revenue doesn't.</p>
+        <h1>Vendor contracts have a natural tendency to outlive the conditions that made them reasonable.</h1>
 
-        <p class="text-lg text-gray-800 mb-4">Leave an email address to follow along.</p>
+        <p>Margin Steward is a resource for accounting and finance professionals who notice this — and want to do something about it for their clients.</p>
+
+        <p>Most of this is already suspected. Waste hauling contracts commonly run three years, auto-renew on 60-day windows, and carry stiff penalties for early changes. Telecom lines accumulate. Shipping rates drift. The tools here are designed to make these patterns quantifiable and presentable — so the conversation moves from suspicion to specifics. A recovered dollar reaches the bottom line intact. New revenue doesn't.</p>
+
+        <p><a href="#">Cost categories</a>. <a href="#">Industry profiles</a>. <a href="/scenario">A scenario tool</a>. Each is designed to support a client conversation, not replace the judgment behind it.</p>
+
+        <p>New cost categories, industry profiles, and tools are added as they're developed. Leave an email address to follow along.</p>
 
         <form id="email-capture-form" novalidate>
-            <div class="flex flex-col sm:flex-row gap-2">
+            <div class="email-capture">
                 <input
                     type="email"
                     id="email-input"
                     name="email"
                     placeholder="your@email.com"
-                    class="border p-3 rounded-md text-sm flex-1"
+                    class="email-input"
                     required
                 >
-                <button
-                    type="submit"
-                    class="bg-blue-600 text-white px-4 py-3 rounded-md text-sm"
-                >Follow along</button>
+                <button type="submit" class="email-button">Follow along</button>
             </div>
-            <p id="email-error" class="text-sm text-red-600 mt-2" style="display:none;"></p>
+            <p id="email-error" class="email-error" style="display:none;"></p>
         </form>
-        <p id="email-success" class="text-md text-gray-800" style="display:none;">You're on the list.</p>
+        <p id="email-success" class="email-confirmation" style="display:none;">You're on the list.</p>
+
     </div>
+
+    <footer><!-- extensible — no content at this time --></footer>
 
     <script>
         (function () {

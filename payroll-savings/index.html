@@ -5,24 +5,16 @@
     <meta charset="UTF-8">
     <link rel="icon" href="data:,">
     <title>Section 125 Plans — Employer FICA Savings | Margin Steward</title>
-
-    <meta name="description"
-        content="Evaluate a Section 125 cafeteria plan and estimate employer FICA savings and employee take-home increases by headcount." />
-
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <meta name="description" content="Evaluate a Section 125 cafeteria plan and estimate employer FICA savings and employee take-home increases by headcount." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link href="./../main.css" rel="stylesheet">
-    <style>
-        .big-money {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-    </style>
     <meta property="og:title" content="Section 125 Plans — Employer FICA Savings" />
     <meta property="og:description" content="Estimate employer FICA savings and employee take-home increases from a Section 125 cafeteria plan." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://marginsteward.com/payroll-savings/" />
     <meta name="robots" content="index, follow" />
-
     <script type="application/ld+json">
     {
     "@context": "https://schema.org",
@@ -39,134 +31,108 @@
     "url": "https://marginsteward.com/payroll-savings/"
     }
     </script>
-
 </head>
 
-<body class="bg-gray-50 bg-gray-100 font-family-primary">
+<body>
 
-    <nav class="bg-blue-700">
-        <div class="max-w-6xl px-4">
-            <div class="flex justify-between">
-                <div class="flex space-x-4">
-                    <!-- primary nav -->
-                    <div class="hidden md:flex items-center space-x-1">
-                        <a href="/scenario" class="py-2 px-3 text-blue-50 hover:text-blue-200">Cost optimization scenarios</a>
-                        <a href="/payroll-savings/" class="py-2 px-3 text-blue-100">Section 125 savings</a>
-                        <a href="/checklist" class="py-2 px-3 text-blue-50 hover:text-blue-200">Printable spend checklist</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <nav>
+        <a href="/" class="wordmark">Margin Steward</a>
+        <ul class="nav-links">
+            <li><a href="/payroll-savings/" class="nav-link">Section 125</a></li>
+            <li><a href="/scenario" class="nav-link">Scenario</a></li>
+            <li><a href="/checklist" class="nav-link">Checklist</a></li>
+        </ul>
     </nav>
 
-    <div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-8 mt-8 space-y-8">
+    <div class="content-container">
 
-        <h1 class="text-3xl text-black">Section 125 Plans — Employer FICA Savings</h1>
+        <h1>Section 125 Plans — Employer FICA Savings</h1>
 
-        <div class="flex flex-col md:flex-row md:space-x-12 space-y-6 md:space-y-0 border-t border-b border-gray-200 py-8 my-2">
-            <div>
-                <div class="big-money text-black">~$575</div>
-                <div class="text-sm text-gray-500 mt-1">annual FICA savings per employee</div>
+        <div class="hero-numbers">
+            <div class="hero-stat">
+                <span class="hero-stat-number">~$575</span>
+                <span class="hero-stat-label">annual FICA savings per employee</span>
             </div>
-            <div>
-                <div class="big-money text-black">45 days</div>
-                <div class="text-sm text-gray-500 mt-1">typical time to implement</div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">45 days</span>
+                <span class="hero-stat-label">typical time to implement</span>
             </div>
-            <div>
-                <div class="big-money text-black">$0</div>
-                <div class="text-sm text-gray-500 mt-1">net cost to employer</div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">$0</span>
+                <span class="hero-stat-label">net cost to employer</span>
             </div>
         </div>
 
-        <p class="text-gray-700">Employers pay FICA tax at 7.65% of taxable salaries. Most are paying that
-        rate on more payroll than they need to — not because of an error, but because
-        a simple, long-established plan was never set up. Section 125 has made this
-        fixable since 1978.</p>
+        <p>Employers pay FICA tax at 7.65% of taxable salaries. Most are paying that rate on more payroll than they need to — not because of an error, but because a simple, long-established plan was never set up. Section 125 has made this fixable since 1978.</p>
 
-        <p class="text-gray-700">If an organization hasn't done this, the math below is theirs to keep.</p>
+        <p>If an organization hasn't done this, the math below is theirs to keep.</p>
 
-        <div class="space-y-4">
-            <h2 class="text-xl font-semibold text-black">How It Works</h2>
-            <p class="text-gray-700">No vendors change. Existing health carriers, payroll provider, and benefits
-            stay exactly as-is. A plan document is added. Employees elect to pay certain
-            benefit premiums pre-tax. Taxable payroll shrinks. FICA is calculated on the
-            smaller base. Employer pays less. Every year. Automatically.</p>
-            <p class="text-gray-700">Employees benefit too. Each takes home roughly $212 more per month — at no
-            cost to them or the employer.</p>
-        </div>
+        <h2>How It Works</h2>
 
-        <div class="space-y-4">
-            <h2 class="text-xl font-semibold text-black">Who Qualifies</h2>
-            <p class="text-gray-700">Any employer with 5 or more full-time W2 employees and an existing health
-            plan — or one looking to establish benefits for the first time. Works across
-            industries including non-profit, government, education, and private sector.
-            S-corp owners and sole proprietors cannot participate themselves, but their
-            employees can, and that's where the savings are.</p>
-        </div>
+        <p>No vendors change. Existing health carriers, payroll provider, and benefits stay exactly as-is. A plan document is added. Employees elect to pay certain benefit premiums pre-tax. Taxable payroll shrinks. FICA is calculated on the smaller base. Employer pays less. Every year. Automatically.</p>
 
-        <div class="space-y-4">
+        <p>Employees benefit too. Each takes home roughly $212 more per month — at no cost to them or the employer.</p>
 
-            <h2 class="text-xl font-semibold text-black">Estimate the Impact</h2>
+        <h2>Who Qualifies</h2>
 
-            <p class="text-gray-700">The calculator shows two effects of a Section 125 plan, all from the same
-            input: headcount. This is not a coincidence — they both flow from the same
-            mechanism.</p>
+        <p>Any employer with 5 or more full-time W2 employees and an existing health plan — or one looking to establish benefits for the first time. Works across industries including non-profit, government, education, and private sector. S-corp owners and sole proprietors cannot participate themselves, but their employees can, and that's where the savings are.</p>
 
-            <p class="text-gray-700">Adjust the slider. The per-employee assumptions are standard. The math is not
-            complicated, which is part of what makes this interesting.</p>
+        <h2>Estimate the Impact</h2>
 
-            <label class="font-semibold">
-                Number of employees:
-                <span id="empDisplay">50</span>
-            </label>
+        <p>The calculator shows two effects of a Section 125 plan, all from the same input: headcount. This is not a coincidence — they both flow from the same mechanism.</p>
 
-            <input type="range" id="empSlider" min="5" max="3000" value="50" class="w-full">
+        <p>Adjust the slider. The per-employee assumptions are standard. The math is not complicated, which is part of what makes this interesting.</p>
 
-            <div class="space-y-3 pt-2">
-                <!-- Column headers -->
-                <div class="grid grid-cols-3 gap-4 text-sm text-gray-500 font-medium">
-                    <div></div>
-                    <div>Per employee / year</div>
-                    <div>Overall annual</div>
-                </div>
+        <label class="calc-slider-label">
+            Number of employees: <span id="empDisplay">50</span>
+        </label>
 
-                <!-- Row 1: Employee take-home increase -->
-                <div class="grid grid-cols-3 gap-4 items-baseline">
-                    <div class="text-gray-700">Employee take-home increase</div>
-                    <div id="takehome-per" class="font-semibold text-gray-900"></div>
-                    <div id="takehome-total" class="font-semibold text-gray-900"></div>
-                </div>
+        <input type="range" id="empSlider" min="5" max="3000" value="50" class="calc-slider">
 
-                <hr class="border-gray-200">
-
-                <!-- Row 2: Employer FICA savings -->
-                <div class="grid grid-cols-3 gap-4 items-baseline">
-                    <div class="text-gray-700">Employer FICA savings</div>
-                    <div id="fica-per" class="font-semibold text-gray-900"></div>
-                    <div id="fica-total" class="font-semibold text-gray-900"></div>
-                </div>
-
+        <div class="calc-output">
+            <div class="calc-col-header-row">
+                <div></div>
+                <div class="calc-col-header">Per employee / year</div>
+                <div class="calc-col-header">Overall annual</div>
             </div>
 
+            <div class="calc-data-row">
+                <div class="calc-label">Employee take-home increase</div>
+                <div id="takehome-per" class="calc-figure"></div>
+                <div id="takehome-total" class="calc-figure"></div>
+            </div>
+
+            <div class="calc-data-row">
+                <div class="calc-label">Employer FICA savings</div>
+                <div id="fica-per" class="calc-figure"></div>
+                <div id="fica-total" class="calc-figure"></div>
+            </div>
+
+            <div class="calc-total-row">
+                <span class="calc-total-label">Combined employer profit impact</span>
+                <span id="combined-total" class="calc-total-figure"></span>
+            </div>
         </div>
 
-        <p class="font-semibold text-gray-900">Cost to the employer: zero.</p>
+        <p style="font-size:15px;font-weight:500;color:var(--ink);margin-top:var(--space-3);">Cost to the employer: zero.</p>
 
-        <div class="space-y-4">
-            <h2 class="text-xl font-semibold text-black">To Get Started</h2>
-            <ul class="list-disc list-inside text-gray-700 space-y-1">
-                <li>Number of full-time employees</li>
-                <li>Payroll provider</li>
-                <li>Pay cycle</li>
-                <li>Current insurance provider</li>
-                <li>2–3 available appointment slots</li>
-            </ul>
-            <p class="text-gray-700">Setting this up requires a qualified plan administrator — it isn't something
-            an accountant or bookkeeper handles directly. A 15-minute call is all it takes.</p>
-            <p class="text-gray-700">If you'd like to explore whether this is appropriate for a client, <a href="mailto:broberts@marginsteward.com" class="text-blue-700 hover:underline">reach out</a>.</p>
-        </div>
+        <h2>To Get Started</h2>
+
+        <ul class="to-get-started">
+            <li>Number of full-time employees</li>
+            <li>Payroll provider</li>
+            <li>Pay cycle</li>
+            <li>Current insurance provider</li>
+            <li>2–3 available appointment slots</li>
+        </ul>
+
+        <p>Setting this up requires a qualified plan administrator — it isn't something an accountant or bookkeeper handles directly. A 15-minute call is all it takes.</p>
+
+        <p>If you'd like to explore whether this is appropriate for a client, <a href="mailto:brendan@marginsteward.com">reach out</a>.</p>
 
     </div>
+
+    <footer><!-- extensible — no content at this time --></footer>
 
     <script type="module" src="./../src/payroll-savings.js"></script>
 

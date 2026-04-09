@@ -1,9 +1,9 @@
 import { formatUSD } from './constants.js';
 
 export function generateCumulativeTableHTML(months, low, median, high) {
-  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th style="text-align: right;" class="p-2">Month</th><th style="text-align: right;" class="p-2 text-right">Low</th><th style="text-align: right;" class="p-2 text-right">Median</th><th style="text-align: right;" class="p-2 text-right">High</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th class="num">Month</th><th class="num">Low</th><th class="num">Median</th><th class="num">High</th></tr></thead><tbody>';
   for (let i = 0; i < months; i++) {
-    html += `<tr class="border-b"><td style="text-align: right;" class="p-2">${i+1}</td><td style="text-align: right;" class="p-2 text-right">${formatUSD(low[i])}</td><td style="text-align: right;" class="p-2 text-right">${formatUSD(median[i])}</td><td style="text-align: right;" class="p-2 text-right">${formatUSD(high[i])}</td></tr>`;
+    html += `<tr><td class="num">${i+1}</td><td class="figure num">${formatUSD(low[i])}</td><td class="figure num">${formatUSD(median[i])}</td><td class="figure num">${formatUSD(high[i])}</td></tr>`;
   }
   html += '</tbody></table>';
   return html;
@@ -11,21 +11,21 @@ export function generateCumulativeTableHTML(months, low, median, high) {
 
 export function generateMonthlyTableHTML(months, categories) {
   const catNames = categories.map(c => c.name || 'Category');
-  let html = '<table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th style="text-align: right;" class="p-2">Month</th>';
-  catNames.forEach(name => { html += `<th style="text-align: right;" class="p-2 text-right">${escapeHtml(name)}</th>`; });
-  html += '<th style="text-align: right;" class="p-2 text-right">Total</th></tr></thead><tbody>';
+  let html = '<table><thead><tr><th class="num">Month</th>';
+  catNames.forEach(name => { html += `<th class="num">${escapeHtml(name)}</th>`; });
+  html += '<th class="num">Total</th></tr></thead><tbody>';
 
   for (let m = 0; m < months; m++) {
-    let row = `<tr style="text-align: right;" class="border-b"><td class="p-2">${m+1}</td>`;
+    let row = `<tr><td class="num">${m+1}</td>`;
     let total = 0;
     categories.forEach(cat => {
       const monthly = Number(cat.monthly_spend) || 0;
       const start = Number(cat.start_month) || 1;
       const value = ((m + 1) >= start) ? Math.round(monthly * (cat.medianRateDecimal ?? 0.14)) : 0;
       total += value;
-      row += `<td style="text-align: right;" class="p-2 text-right">${formatUSD(value)}</td>`;
+      row += `<td class="figure num">${formatUSD(value)}</td>`;
     });
-    row += `<td style="text-align: right;" class="p-2 text-right">${formatUSD(total)}</td></tr>`;
+    row += `<td class="figure num">${formatUSD(total)}</td></tr>`;
     html += row;
   }
   html += '</tbody></table>';
@@ -34,9 +34,9 @@ export function generateMonthlyTableHTML(months, categories) {
 
 export function renderReportIntro(state) {
   const rows = (state.categories || []).map(cat => {
-    return `<tr class="border-b"><td style="text-align: left;" class="p-2">${escapeHtml(cat.name || '')}</td><td style="text-align: right;" class="p-2 text-right">${formatUSD(Number(cat.monthly_spend)||0)}</td><td style="text-align: right;" class="p-2 text-right">${((cat.medianRateDecimal||0)*100).toFixed(0)}%</td><td style="text-align: right;" class="p-2 text-right">${Number(cat.start_month||1)}</td></tr>`;
+    return `<tr><td>${escapeHtml(cat.name || '')}</td><td class="figure num">${formatUSD(Number(cat.monthly_spend)||0)}</td><td class="num">${((cat.medianRateDecimal||0)*100).toFixed(0)}%</td><td class="num">${Number(cat.start_month||1)}</td></tr>`;
   }).join('\n');
-  return `<h2>Assumptions</h2><table class="min-w-full bg-white text-sm"><thead><tr class="border-b"><th style="text-align: left;" class="p-2 text-left">Category</th><th style="text-align: right;" class="p-2 text-right">Monthly Spend</th><th style="text-align: right;" class="p-2 text-right">Estimated vendor cost reduction (%)</th><th style="text-align: right;" class="p-2 text-right">Start Month</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<h2>Assumptions</h2><table><thead><tr><th>Category</th><th class="num">Monthly Spend</th><th class="num">Est. cost reduction (%)</th><th class="num">Start Month</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function escapeHtml(s) {
@@ -50,26 +50,24 @@ export function generateSummaryHTML(categories) {
 
   const rows = (categories || []).map(cat => {
     const monthlySavings = Math.round((Number(cat.monthly_spend) || 0) * (cat.medianRateDecimal ?? 0.14));
-    return `<div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; color: #374151;">
+    return `<div class="summary-row">
       <span>${escapeHtml(cat.name || 'Category')}</span>
-      <span>${formatUSD(monthlySavings)}</span>
+      <span class="summary-row-figure">${formatUSD(monthlySavings)}</span>
     </div>`;
   }).join('');
 
-  return `<div style="padding: 24px 0;">
-  <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 4px;">Monthly savings at full optimization</p>
-  <p style="font-size: 3rem; font-weight: 700; color: #111827; line-height: 1.1;">${formatUSD(Math.round(totalMonthly))}</p>
-  <div style="margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+  return `<div style="padding:var(--space-3) 0;">
+  <p class="summary-header">Monthly savings at full optimization</p>
+  <p class="summary-total">${formatUSD(Math.round(totalMonthly))}</p>
+  <div class="summary-breakdown">
     ${rows}
   </div>
 </div>`;
 }
 
 export const reductionPercentTooltip = '<div class="tooltip-wrapper">\
-      <div class="font-medium text-white mt-2 cursor-help">Estimated vendor<br>cost reduction (%)</div>\
+      <div class="cat-label cursor-help" style="margin-top:var(--space-2);">Estimated vendor<br>cost reduction (%)</div>\
       <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">\
-          <div class="text-sm">\
-              Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category.\
-          </div>\
+          Estimated percentage reduction in vendor spend achievable through pricing alignment, service-level adjustments, or competitive pressure. Actual results vary by category.\
       </div>\
     </div>';

@@ -9,7 +9,7 @@ let currentState = null;
 // Small toast helper
 function showToast(msg, timeout = 2000) {
   const t = document.createElement('div');
-  t.className = 'fixed right-4 top-4 bg-grey-500 text-white px-4 py-2 rounded shadow-lg z-60';
+  t.className = 'toast';
   t.innerText = msg;
   document.body.appendChild(t);
   setTimeout(() => { try { t.remove(); } catch (e) {} }, timeout);
@@ -95,23 +95,23 @@ function renderCategoryList(state) {
   
   state.categories.forEach((cat, idx) => {
     const row = document.createElement('div');
-    row.className = 'p-2 rounded';
+    row.className = 'cat-row';
 
     // container with left column (name + amount) and right column (remove button)
     const container = document.createElement('div');
-    container.className = 'flex items-start gap-2';
+    container.className = 'cat-row-inner';
 
     const leftCol = document.createElement('div');
-    leftCol.className = 'flex-1';
+    leftCol.className = 'cat-fields';
 
     const nameLabel = document.createElement('label');
-    nameLabel.className = 'block text-sm font-medium text-white';
+    nameLabel.className = 'cat-label';
     nameLabel.innerText = 'Category';
 
     const nameInput = document.createElement('input');
     nameInput.id = `cat-name-${idx}`;
     nameInput.value = cat.name;
-    nameInput.className = 'w-full p-2 rounded text-black text-sm';
+    nameInput.className = 'cat-input';
     nameInput.addEventListener('change', (e) => {
       cat.name = e.target.value || 'Category';
       pushStateToUrl(state);
@@ -126,10 +126,10 @@ function renderCategoryList(state) {
     
     // Start month input
     const bottomRow = document.createElement('div');
-    bottomRow.className = 'mt-6';
+    bottomRow.className = 'cat-section';
 
     const spendLabel = document.createElement('label');
-    spendLabel.className = 'block text-sm font-medium text-white';
+    spendLabel.className = 'cat-label';
     spendLabel.innerText = 'Monthly spend (USD)';
 
     const spendInput = document.createElement('input');
@@ -137,7 +137,7 @@ function renderCategoryList(state) {
     spendInput.type = 'text';
     spendInput.value = (typeof cat.monthly_spend === 'number') ? String(cat.monthly_spend) : (cat.monthly_spend ?? '');
     spendInput.placeholder = 'Monthly spend';
-    spendInput.className = 'w-full p-2 rounded text-sm text-black';
+    spendInput.className = 'cat-input';
     spendInput.addEventListener('input', (e) => {
       const raw = e.target.value || '';
       const cleaned = raw.replace(/[^0-9-]/g, '');
@@ -148,7 +148,7 @@ function renderCategoryList(state) {
     });
 
     const inputContainer = document.createElement('div');
-    inputContainer.className = 'mt-2';
+    inputContainer.className = 'cat-input-wrap';
     inputContainer.appendChild(spendInput);
     
     bottomRow.appendChild(spendLabel);
@@ -158,10 +158,10 @@ function renderCategoryList(state) {
 
     // Start month input
     const startRow = document.createElement('div');
-    startRow.className = 'mt-6';
+    startRow.className = 'cat-section';
 
     const startLabel = document.createElement('label');
-    startLabel.className = 'block text-sm font-medium text-white';
+    startLabel.className = 'cat-label';
     startLabel.innerText = 'Start month';
 
     const startInput = document.createElement('input');
@@ -169,7 +169,7 @@ function renderCategoryList(state) {
     startInput.type = 'number';
     startInput.min = 1;
     startInput.value = cat.start_month || 1;
-    startInput.className = 'w-20 p-2 rounded text-sm text-black';
+    startInput.className = 'cat-input cat-input-sm';
     startInput.addEventListener('input', (e) => {
       const v = parseInt(e.target.value || '1', 10) || 1;
       // clamp to at least 1
@@ -179,7 +179,7 @@ function renderCategoryList(state) {
     });
 
     const startMonthContainer = document.createElement('div');
-    startMonthContainer.className = 'mt-2';
+    startMonthContainer.className = 'cat-input-wrap';
     startMonthContainer.appendChild(startInput);
 
     startRow.appendChild(startLabel);
@@ -190,10 +190,10 @@ function renderCategoryList(state) {
 
     // Rate input (percent) per category — text input with trailing % indicator
     const rateRow = document.createElement('div');
-    rateRow.className = 'mt-6';
+    rateRow.className = 'cat-section';
 
     const rateLabel = document.createElement('div');
-    rateLabel.className = 'block text-sm font-medium text-white';
+    rateLabel.className = 'cat-label';
     rateLabel.innerHTML = reductionPercentTooltip;
 
     const rateInput = document.createElement('input');
@@ -203,7 +203,7 @@ function renderCategoryList(state) {
     const percent = ((cat.medianRateDecimal ?? 0) * 100).toFixed(0);
     rateInput.value = percent;
     rateInput.setAttribute('aria-label', 'Savings rate percent');
-    rateInput.className = 'w-full pr-8 p-2 rounded text-sm text-black';
+    rateInput.className = 'cat-input';
     rateInput.addEventListener('input', (e) => {
       const raw = e.target.value || '14';
       const cleaned = String(raw).replace(/[^0-9.\-]/g, '');
@@ -215,7 +215,7 @@ function renderCategoryList(state) {
 
 
     const rateContainer = document.createElement('div');
-    rateContainer.className = 'mt-2';
+    rateContainer.className = 'cat-input-wrap';
     rateContainer.appendChild(rateInput);
 
     rateRow.appendChild(rateLabel);
@@ -224,7 +224,7 @@ function renderCategoryList(state) {
 
     
     const nameContainer = document.createElement('div');
-    nameContainer.className = 'mt-2';
+    nameContainer.className = 'cat-input-wrap';
     nameContainer.appendChild(nameInput);
     
     leftCol.appendChild(nameLabel);
@@ -233,7 +233,7 @@ function renderCategoryList(state) {
 
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
-    removeBtn.className = 'text-sm text-white bg-navyblue px-2 py-1 rounded';
+    removeBtn.className = 'cat-remove';
     removeBtn.innerText = '✕';
     removeBtn.title = 'Remove category';
     removeBtn.addEventListener('click', () => {
@@ -254,7 +254,7 @@ function renderCategoryList(state) {
 
     if (state.categories.length > 1 && idx < state.categories.length - 1) {
       const hr = document.createElement('hr');
-      hr.className = 'my-4 border-gray-400';
+      hr.className = 'cat-divider';
       row.appendChild(hr);
     }
 
