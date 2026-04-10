@@ -21,10 +21,15 @@
 
   --bg-page:  #F3F4F6;
   --bg-card:  #FFFFFF;
-  --bg-nav:   #FFFFFF;
 
   --border-subtle:  #EAF0F7;
   --border-default: #C8D8EB;
+
+  /* Dedicated nav tokens — never alias to inverted blue vars */
+  --bg-nav:               #FFFFFF;
+  --wordmark-color:       #1A3F5F;
+  --nav-link-color:       #4A4F55;
+  --nav-link-hover-color: #2A6496;
 
   --space-1:  8px;
   --space-2:  16px;
@@ -35,11 +40,11 @@
   --space-12: 96px;
 }
 
+/* OS dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-page:  #0F2233;
     --bg-card:  #1A3F5F;
-    --bg-nav:   #0F2233;
 
     --ink:      #EAF0F7;
     --grey-500: #90B3D1;
@@ -55,7 +60,63 @@
     --positive: #5AAF82;
     --negative: #B85A5A;
     --neutral:  #8A9AAA;
+
+    --bg-nav:               #0F2233;
+    --wordmark-color:       #EAF0F7;
+    --nav-link-color:       #90B3D1;
+    --nav-link-hover-color: #EAF0F7;
   }
+}
+
+/* Manual theme override — takes precedence over media query */
+[data-theme="dark"] {
+  --bg-page:  #0F2233;
+  --bg-card:  #1A3F5F;
+
+  --ink:      #EAF0F7;
+  --grey-500: #90B3D1;
+
+  --border-subtle:  #1A3F5F;
+  --border-default: #2A6496;
+
+  --blue-50:  #0F2233;
+  --blue-100: #1A3F5F;
+  --blue-700: #C8D8EB;
+  --blue-900: #EAF0F7;
+
+  --positive: #5AAF82;
+  --negative: #B85A5A;
+  --neutral:  #8A9AAA;
+
+  --bg-nav:               #0F2233;
+  --wordmark-color:       #EAF0F7;
+  --nav-link-color:       #90B3D1;
+  --nav-link-hover-color: #EAF0F7;
+}
+
+[data-theme="light"] {
+  --bg-page:  #F3F4F6;
+  --bg-card:  #FFFFFF;
+
+  --ink:      #2E2E2E;
+  --grey-500: #4A4F55;
+
+  --border-subtle:  #EAF0F7;
+  --border-default: #C8D8EB;
+
+  --blue-50:  #EAF0F7;
+  --blue-100: #C8D8EB;
+  --blue-700: #1A3F5F;
+  --blue-900: #0F2233;
+
+  --positive: #3A7D5A;
+  --negative: #8B3A3A;
+  --neutral:  #5A6472;
+
+  --bg-nav:               #FFFFFF;
+  --wordmark-color:       #1A3F5F;
+  --nav-link-color:       #4A4F55;
+  --nav-link-hover-color: #2A6496;
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */
@@ -82,6 +143,12 @@ body {
   padding: 0 24px;
 }
 
+.tool-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
 /* ─── Navigation ─────────────────────────────────────────────── */
 nav {
   background: var(--bg-nav);
@@ -96,14 +163,35 @@ nav {
   z-index: 100;
 }
 
+@media (prefers-color-scheme: dark) {
+  nav { border-bottom: none; }
+}
+
+[data-theme="dark"] nav { border-bottom: none; }
+[data-theme="light"] nav { border-bottom: 0.5px solid var(--border-subtle); }
+
 .wordmark {
   font-family: 'Libre Franklin', sans-serif;
   font-weight: 500;
   font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--blue-700);
+  color: var(--wordmark-color);
   text-decoration: none;
+}
+.wordmark:hover { text-decoration: none; }
+
+/* Heavier wordmark for light-on-dark legibility */
+@media (prefers-color-scheme: dark) {
+  .wordmark { font-weight: 600; font-size: 13px; letter-spacing: 0.14em; }
+}
+[data-theme="dark"] .wordmark { font-weight: 600; font-size: 13px; letter-spacing: 0.14em; }
+[data-theme="light"] .wordmark { font-weight: 500; font-size: 12px; letter-spacing: 0.2em; }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
 .nav-links {
@@ -119,36 +207,51 @@ nav {
   font-weight: 500;
   font-size: 13px;
   letter-spacing: 0.01em;
-  color: var(--grey-500);
+  color: var(--nav-link-color);
   text-decoration: none;
 }
 
 .nav-link:hover {
-  color: var(--blue-500);
+  color: var(--nav-link-hover-color);
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  nav {
-    background: var(--blue-900);
-    border-bottom: none;
-  }
-
-  .wordmark {
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    color: var(--blue-50);
-  }
-
-  .nav-link {
-    color: var(--blue-200);
-  }
-
-  .nav-link:hover {
-    color: var(--blue-50);
-  }
+/* ─── Theme Toggle ───────────────────────────────────────────── */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--nav-link-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease;
 }
+
+.theme-toggle:hover {
+  color: var(--nav-link-hover-color);
+}
+
+/* Show moon in light mode (click to go dark), sun in dark mode (click to go light) */
+.icon-sun  { display: none; }
+.icon-moon { display: block; }
+
+@media (prefers-color-scheme: dark) {
+  .icon-sun  { display: block; }
+  .icon-moon { display: none; }
+}
+
+/* OS dark + user override to light */
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] .icon-sun  { display: none; }
+  [data-theme="light"] .icon-moon { display: block; }
+}
+
+/* Manual dark */
+[data-theme="dark"] .icon-sun  { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
 
 /* ─── Typography ─────────────────────────────────────────────── */
 h1 {
@@ -559,6 +662,29 @@ tr:last-child td {
   margin-top: var(--space-6);
 }
 
+.checklist-cta {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 0.5px solid var(--border-subtle);
+}
+
+.checklist-cta-btn {
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--blue-500);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+.checklist-cta-btn:hover {
+  color: var(--blue-700);
+  text-decoration: underline;
+}
+
 #table-title {
   font-family: 'Libre Franklin', sans-serif;
   font-weight: 600;
@@ -784,6 +910,26 @@ tr:last-child td {
   margin-bottom: var(--space-6);
 }
 
+.prep-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-top: var(--space-8);
+  margin-bottom: var(--space-4);
+}
+
+.prep-section {
+  margin-bottom: var(--space-8);
+}
+
+.prep-section:last-child {
+  margin-bottom: 0;
+}
+
+.prep-category-block {
+  margin-bottom: var(--space-4);
+}
+
 .checklist-section {
   margin-bottom: var(--space-6);
 }
@@ -905,7 +1051,8 @@ tr:last-child td {
 
 /* ─── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 600px) {
-  .content-container {
+  .content-container,
+  .tool-container {
     padding: var(--space-4) var(--space-2);
   }
 
@@ -923,6 +1070,10 @@ tr:last-child td {
 
   .nav-links {
     gap: var(--space-3);
+  }
+
+  .nav-right {
+    gap: var(--space-2);
   }
 
   .email-capture {

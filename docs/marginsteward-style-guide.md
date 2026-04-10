@@ -47,8 +47,11 @@ letter-spacing: 0.2em;
 text-transform: uppercase;
 ```
 
-Light mode color: --blue-700 (#1A3F5F)
-Dark mode color: --blue-50 (#EAF0F7)
+Light mode color: --wordmark-color (#1A3F5F)
+Dark mode color: --wordmark-color (#EAF0F7)
+
+The wordmark uses a dedicated token rather than `--blue-700` directly,
+because `--blue-700` inverts in dark mode (see nav token section below).
 
 ---
 
@@ -83,7 +86,12 @@ Dark mode color: --blue-50 (#EAF0F7)
   /* Surfaces */
   --bg-page:   #F3F4F6;
   --bg-card:   #FFFFFF;
-  --bg-nav:    #FFFFFF;
+
+  /* Nav tokens — dedicated to avoid inversion in dark mode */
+  --bg-nav:               #FFFFFF;
+  --wordmark-color:       #1A3F5F;
+  --nav-link-color:       #4A4F55;
+  --nav-link-hover-color: #2A6496;
 
   /* Borders */
   --border-subtle:  #EAF0F7;
@@ -93,13 +101,17 @@ Dark mode color: --blue-50 (#EAF0F7)
 
 ### Dark Mode Properties
 
+The `--blue-*` palette variables invert in dark mode (e.g. `--blue-900`
+becomes the lightest value). This makes them unsuitable as direct nav
+color references. The nav uses dedicated tokens that hold correct hex
+values in each mode.
+
 ```css
 @media (prefers-color-scheme: dark) {
   :root {
     /* Surfaces */
     --bg-page:  #0F2233;
     --bg-card:  #1A3F5F;
-    --bg-nav:   #0F2233;
 
     /* Text */
     --ink:      #EAF0F7;
@@ -119,14 +131,53 @@ Dark mode color: --blue-50 (#EAF0F7)
     --positive: #5AAF82;
     --negative: #B85A5A;
     --neutral:  #8A9AAA;
+
+    /* Nav tokens — hardcoded hex, not aliases to blue-* vars */
+    --bg-nav:               #0F2233;
+    --wordmark-color:       #EAF0F7;
+    --nav-link-color:       #90B3D1;
+    --nav-link-hover-color: #EAF0F7;
   }
+}
+```
+
+### Manual Theme Override
+
+When the user activates the light/dark toggle, `data-theme="dark"` or
+`data-theme="light"` is set on `<html>`. These blocks must appear **after**
+the media query in the stylesheet so cascade order gives them priority
+(both selectors have equal specificity 0-1-0).
+
+```css
+[data-theme="dark"] {
+  --bg-page: #0F2233; --bg-card: #1A3F5F;
+  --ink: #EAF0F7; --grey-500: #90B3D1;
+  --border-subtle: #1A3F5F; --border-default: #2A6496;
+  --blue-50: #0F2233; --blue-100: #1A3F5F;
+  --blue-700: #C8D8EB; --blue-900: #EAF0F7;
+  --positive: #5AAF82; --negative: #B85A5A; --neutral: #8A9AAA;
+  --bg-nav: #0F2233; --wordmark-color: #EAF0F7;
+  --nav-link-color: #90B3D1; --nav-link-hover-color: #EAF0F7;
+}
+
+[data-theme="light"] {
+  --bg-page: #F3F4F6; --bg-card: #FFFFFF;
+  --ink: #2E2E2E; --grey-500: #4A4F55;
+  --border-subtle: #EAF0F7; --border-default: #C8D8EB;
+  --blue-50: #EAF0F7; --blue-100: #C8D8EB;
+  --blue-700: #1A3F5F; --blue-900: #0F2233;
+  --positive: #3A7D5A; --negative: #8B3A3A; --neutral: #5A6472;
+  --bg-nav: #FFFFFF; --wordmark-color: #1A3F5F;
+  --nav-link-color: #4A4F55; --nav-link-hover-color: #2A6496;
 }
 ```
 
 ### Color Usage Rules
 
-- Blue-700 / blue-500: links, interactive elements, wordmark (light mode)
-- Blue-900: deepest navy backgrounds, dark mode nav
+- Blue-700 / blue-500: links and interactive elements (use directly — not in nav)
+- Nav colors: always use the dedicated `--wordmark-color`, `--nav-link-color`,
+  `--nav-link-hover-color`, `--bg-nav` tokens
+- Blue-900: deepest navy backgrounds (non-nav)
 - Ink: all body text in light mode
 - Grey-500: secondary text, nav links, labels
 - Grey-100 / --bg-page: page background
@@ -187,71 +238,106 @@ Whitespace is structural. When in doubt, add more of it.
 ### Structure
 
 - Left: wordmark (links to /)
-- Right: flat links, no dropdowns, no hamburger menu
+- Right: `.nav-right` div containing flat nav links + theme toggle button
 - Height: 52px
 - No logo, no icon — wordmark only
 
-### Light Mode
+### HTML
+
+```html
+<nav>
+  <a href="/" class="wordmark">Margin Steward</a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="/payroll-savings/" class="nav-link">Section 125</a></li>
+      <li><a href="/scenario" class="nav-link">Scenario</a></li>
+      <li><a href="/checklist" class="nav-link">Checklist</a></li>
+    </ul>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+      <svg class="icon-sun" ...sun icon SVG...></svg>
+      <svg class="icon-moon" ...moon icon SVG...></svg>
+    </button>
+  </div>
+</nav>
+```
+
+### CSS
+
+Nav uses dedicated color tokens (not `--blue-*` aliases) to avoid color
+inversion from the palette swap in dark mode.
 
 ```css
 nav {
-  background: #FFFFFF;
+  background: var(--bg-nav);
   border-bottom: 0.5px solid var(--border-subtle);
-  padding: 0 24px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
-.wordmark {
-  font-family: 'Libre Franklin', sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--blue-700);
-  text-decoration: none;
-}
-
-.nav-link {
-  font-family: 'Libre Franklin', sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.01em;
-  color: var(--grey-500);
-  text-decoration: none;
-}
-
-.nav-link:hover {
-  color: var(--blue-500);
-}
+.wordmark { color: var(--wordmark-color); }
+.nav-link  { color: var(--nav-link-color); }
+.nav-link:hover { color: var(--nav-link-hover-color); }
 ```
 
-### Dark Mode
+Dark mode via media query and `[data-theme]` override both set the same
+dedicated token values (see Color Palette section).
+
+### Theme Toggle
+
+The toggle button sits inside `.nav-right`, after `.nav-links`. It shows
+a sun icon (visible in dark mode) or moon icon (visible in light mode).
+Icon visibility is controlled by CSS using `.icon-sun` / `.icon-moon`
+classes, not JS.
 
 ```css
-@media (prefers-color-scheme: dark) {
-  nav {
-    background: var(--blue-900);
-    border-bottom: none;
-  }
+.nav-right { display: flex; align-items: center; gap: 28px; }
 
-  .wordmark {
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    color: var(--blue-50);
-  }
-
-  .nav-link {
-    color: var(--blue-200);
-  }
-
-  .nav-link:hover {
-    color: var(--blue-50);
-  }
+.theme-toggle {
+  background: none; border: none; cursor: pointer;
+  color: var(--nav-link-color);
 }
+.theme-toggle:hover { color: var(--nav-link-hover-color); }
+
+.icon-sun  { display: none; }
+.icon-moon { display: block; }
+
+/* In dark mode, show sun (to switch back to light) */
+@media (prefers-color-scheme: dark) { .icon-sun { display: block; } .icon-moon { display: none; } }
+[data-theme="dark"] .icon-sun  { display: block; }
+[data-theme="dark"] .icon-moon { display: none; }
+[data-theme="light"] .icon-sun  { display: none; }
+[data-theme="light"] .icon-moon { display: block; }
+```
+
+Toggle JS (inline, not a module — must run on all pages):
+
+```javascript
+(function() {
+  var toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('ms-theme', next);
+    });
+  }
+})();
+```
+
+### Flash Prevention
+
+To prevent a flash of wrong theme on page load, each HTML `<head>` includes
+an inline synchronous script **before** the CSS `<link>`:
+
+```html
+<script>
+  (function() {
+    var stored = localStorage.getItem('ms-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<link href="...main.css" rel="stylesheet">
 ```
 
 ### Nav Links — Current Set
@@ -536,9 +622,11 @@ regardless of future footer content.
 
 - Load Libre Franklin and DM Mono via Google Fonts API
 - All CSS custom properties defined on :root as above
-- Dark mode via @media (prefers-color-scheme: dark) — no JS toggle required
-  at this stage, but structure CSS variables so a JS class toggle can
-  override media query later if a manual toggle is added
+- Dark mode via @media (prefers-color-scheme: dark) for system preference,
+  with [data-theme="dark"/"light"] attribute overrides for manual toggle
+- Flash prevention: synchronous inline script in each <head> before CSS links
+  sets data-theme from localStorage before first paint
+- Theme toggle: inline JS at bottom of each page body — not a module
 - Apply .content-container to all page wrappers — no exceptions for
   full-width tool stretching
 - Nav rendered as a single shared component across all pages

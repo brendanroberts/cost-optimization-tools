@@ -122,87 +122,104 @@ Wrap all page content (excluding nav) in a container:
 Apply to all pages. No exceptions for full-width stretching — the scenario
 tool uses the same 800px container as all other pages.
 
-### 5. Navigation (replace existing nav entirely)
+### 5. Navigation
 
-Remove the existing blue nav bar and replace with:
+Nav uses dedicated color tokens to avoid inversion from the `--blue-*`
+palette swap in dark mode. `--blue-900` becomes `#EAF0F7` (near-white)
+in dark mode — using it as nav background would invert the nav. Dedicated
+tokens hold the correct hex values in each mode regardless of palette swap.
+
+#### HTML
 
 ```html
 <nav>
   <a href="/" class="wordmark">Margin Steward</a>
-  <ul class="nav-links">
-    <li><a href="/payroll-savings/">Section 125</a></li>
-    <li><a href="/scenario">Scenario</a></li>
-    <li><a href="/checklist">Checklist</a></li>
-  </ul>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="/payroll-savings/" class="nav-link">Section 125</a></li>
+      <li><a href="/scenario" class="nav-link">Scenario</a></li>
+      <li><a href="/checklist" class="nav-link">Checklist</a></li>
+    </ul>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+      <svg class="icon-sun" ...></svg>
+      <svg class="icon-moon" ...></svg>
+    </button>
+  </div>
 </nav>
 ```
+
+#### Nav CSS
 
 ```css
 nav {
   background: var(--bg-nav);
   border-bottom: 0.5px solid var(--border-subtle);
-  padding: 0 var(--space-3);
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
-.wordmark {
-  font-family: 'Libre Franklin', sans-serif;
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--blue-700);
-  text-decoration: none;
-}
+.wordmark { color: var(--wordmark-color); }
+.nav-link  { color: var(--nav-link-color); }
+.nav-link:hover { color: var(--nav-link-hover-color); }
+.nav-right { display: flex; align-items: center; gap: 28px; }
+```
 
-.nav-links {
-  display: flex;
-  gap: var(--space-4);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+#### Dedicated nav tokens in :root
 
-.nav-links a {
-  font-family: 'Libre Franklin', sans-serif;
-  font-weight: 500;
-  font-size: 13px;
-  letter-spacing: 0.01em;
-  color: var(--grey-500);
-  text-decoration: none;
-}
-
-.nav-links a:hover {
-  color: var(--blue-500);
+```css
+:root {
+  --bg-nav:               #FFFFFF;
+  --wordmark-color:       #1A3F5F;
+  --nav-link-color:       #4A4F55;
+  --nav-link-hover-color: #2A6496;
 }
 
 @media (prefers-color-scheme: dark) {
-  nav {
-    background: var(--blue-900);
-    border-bottom: none;
-  }
-
-  .wordmark {
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    color: var(--blue-50);
-  }
-
-  .nav-links a {
-    color: var(--blue-200);
-  }
-
-  .nav-links a:hover {
-    color: var(--blue-50);
+  :root {
+    --bg-nav:               #0F2233;
+    --wordmark-color:       #EAF0F7;
+    --nav-link-color:       #90B3D1;
+    --nav-link-hover-color: #EAF0F7;
   }
 }
+```
+
+Same values repeated in `[data-theme="dark"]` and `[data-theme="light"]`
+blocks (placed after the media query in the stylesheet to win on cascade).
+
+### 5a. Flash Prevention (add to all pages)
+
+Inline synchronous script in `<head>` **before** the CSS `<link>` tag.
+Sets `data-theme` before first paint to prevent flash of wrong theme.
+
+```html
+<script>
+  (function() {
+    var stored = localStorage.getItem('ms-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+<link href="...main.css" rel="stylesheet">
+```
+
+### 5b. Theme Toggle JS (add to all pages)
+
+Inline script at the bottom of `<body>` (not a module — must run on all pages):
+
+```html
+<script>
+  (function() {
+    var toggle = document.getElementById('theme-toggle');
+    if (toggle) {
+      toggle.addEventListener('click', function() {
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('ms-theme', next);
+      });
+    }
+  })();
+</script>
 ```
 
 ### 6. Typography Scale
