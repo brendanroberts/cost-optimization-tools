@@ -1044,8 +1044,7 @@ tr:last-child td {
   display: inline-block !important;
 }
 
-.report-mode .faq-section,
-.faq-section.no-print {
+.report-mode .faq-section {
   display: none !important;
 }
 
