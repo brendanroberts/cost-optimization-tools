@@ -468,6 +468,13 @@ footer {
   line-height: 1.6;
 }
 
+.callout-subline {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--grey-500);
+  margin: 4px 0 0 0;
+}
+
 /* ─── Data Tables ────────────────────────────────────────────── */
 table {
   width: 100%;
