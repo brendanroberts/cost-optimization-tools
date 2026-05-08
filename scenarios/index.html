@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
+    <title>Cost Optimization — Scenario Analysis | Margin Steward</title>
+    <meta name="author" content="Brendan Roberts">
+    <meta name="description" content="Cost optimization insight calculator designed for accountants, controllers, and CFOs.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            var stored = localStorage.getItem('ms-theme');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var theme = stored || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="canonical" href="https://marginsteward.com/scenarios">
+    <link href="../main.css" rel="stylesheet">
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Vendor Expense Scenario Tool",
+        "description": "Interactive scenario modeling tool for accountants and CFOs to estimate vendor cost reduction and cash-flow impact.",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "audience": {
+            "@type": "Audience",
+            "audienceType": "Accountants and CFOs"
+        },
+        "url": "https://marginsteward.com/scenarios"
+        }
+    </script>
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+            "@type": "Question",
+            "name": "What types of expenses are typically well-suited for optimization?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Expenses below gross margin tied to ongoing vendor relationships often present the most opportunity. Common examples include telecommunications, credit card processing fees, utilities, shipping, waste services, uniforms, software subscriptions, payroll services, compressed gases, fuel, janitorial supplies, and office supplies. Results vary by organization and vendor structure."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "How long does it typically take to see meaningful results?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Initial review and adjustment typically span 4 to 8 weeks, followed by one billing cycle to reflect changes. Afterward, ongoing monitoring helps maintain alignment as usage and pricing evolve. Consistency prevents small inefficiencies from accumulating."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "How often should vendor expenses be reviewed?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Most organizations benefit from quarterly or semi-annual reviews depending on volatility and materiality. Regular review helps detect misalignment before inefficiencies compound."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "Are the savings shown guaranteed?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The scenarios are illustrative, not guarantees. Sometimes a review confirms pricing is already appropriate. The process builds confidence that vendor spend remains aligned over time."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "Does this require changing vendors?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Not necessarily. Many improvements occur while retaining vendors by adjusting pricing or scope. Vendor changes are considered only when alignment cannot be achieved."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "Can this work be done internally?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Internal reviews are possible but compete with higher priorities and may rely heavily on vendor information. The tool supports consistent and structured evaluation."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "Can AI do this work?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AI excels at document parsing, anomaly detection, data cleanup, and reporting drafts. However, negotiation, ownership, trust-building, and coordination still require human judgment. AI augments expert work rather than replacing it."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "How should these scenarios and reports be used?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Scenarios support internal decision-making and discussion. Reports are illustrative materials rather than commitments. Professional judgment remains essential."
+            }
+            },
+            {
+            "@type": "Question",
+            "name": "Who created this tool?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The tool was developed by a cost optimization practitioner to support continuous vendor expense management. No user data is collected or stored."
+            }
+            }
+        ]
+        }
+    </script>
+</head>
+
+<body>
+
+    <nav>
+        <a href="/" class="wordmark">Margin Steward</a>
+        <div class="nav-right">
+            <ul class="nav-links">
+                <li><a href="/profiles" class="nav-link">Profiles</a></li>
+                <li><a href="/payroll-savings/" class="nav-link">Payroll Savings</a></li>
+                <li><a href="/scenarios" class="nav-link">Scenarios</a></li>
+                <li><a href="/checklist" class="nav-link">Review Guide</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+            </ul>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="content-container">
+        <h1>Cost Optimization — Scenario Analysis</h1>
+        <p id="intro-text">Illustrative scenarios showing potential cash flow impact from vendor spend optimization</p>
+    </div>
+
+    <div class="tool-container">
+        <div class="tool-layout">
+
+            <aside class="tool-sidebar">
+                <div class="tool-sidebar-inner">
+                    <h3>Expense Categories</h3>
+                    <button id="aside-add-category" class="sidebar-add-btn">
+                        + Add Category
+                    </button>
+                    <div class="tooltip-wrapper">
+                        <div class="sidebar-hint">Examples of commonly reviewed vendor expenses</div>
+                        <div class="tooltip-content no-print" role="tooltip" aria-hidden="true">
+                            <div style="font-weight:600;margin-bottom:6px;">Common examples</div>
+                            <ul>
+                                <li>Telecommunications</li>
+                                <li>Credit card processing</li>
+                                <li>Utilities</li>
+                                <li>Software licenses</li>
+                                <li>Small-package shipping</li>
+                                <li>Waste and recycling</li>
+                                <li>Uniforms and linens</li>
+                            </ul>
+                            <div style="font-size:12px;color:var(--grey-500);margin-top:6px;">Additional examples and guidance are available below.</div>
+                        </div>
+                    </div>
+                    <div id="categories-list"></div>
+                </div>
+            </aside>
+
+            <div class="tool-main">
+
+                <form id="chart-form">
+                    <div class="tool-controls">
+                        <label for="months">Months:
+                            <select id="months" name="months">
+                                <option value="12">12</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                            </select>
+                        </label>
+                        <label for="view-mode">View:
+                            <select id="view-mode" name="view-mode">
+                                <option value="summary">Summary</option>
+                                <option value="cumulative">Cumulative</option>
+                            </select>
+                        </label>
+                        <div class="tool-controls-right">
+                            <button type="button" id="reset-btn" class="tool-button no-print">Reset</button>
+                            <button type="button" id="bookmark-btn" class="tool-button no-print">Bookmark</button>
+                            <button type="button" id="export-pdf-btn" class="tool-button no-print">Export PDF</button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="tool-chart-area">
+                    <div id="chart-container">
+                        <canvas id="scenarioChart" class="w-full"></canvas>
+                    </div>
+                    <div id="summary-block"></div>
+                    <p id="chart-desc" class="chart-desc"></p>
+                </div>
+
+                <div id="report-area">
+                    <div class="table-section">
+                        <p id="table-title">Cumulative Savings</p>
+                        <div id="data-table"></div>
+                    </div>
+                </div>
+
+                <div class="checklist-cta no-print">
+                    <button type="button" id="goto-onboarding-btn" class="checklist-cta-btn">Generate My Preparation Checklist →</button>
+                </div>
+
+                <section id="faq" class="faq-section no-print">
+                    <h2>FAQ</h2>
+                    <div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>What types of expenses are typically well-suited for optimization?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Expenses that sit below gross margin and are tied to ongoing vendor relationships often present the most opportunity. These costs tend to accumulate quietly over time and are rarely revisited unless there is a disruption.</p>
+                                <p>Common examples include:</p>
+                                <ul>
+                                    <li>Telecommunications</li>
+                                    <li>Credit card processing fees</li>
+                                    <li>Utilities</li>
+                                    <li>Small-package shipping</li>
+                                    <li>Waste and recycling</li>
+                                    <li>Uniforms and linens</li>
+                                    <li>Software licenses and subscriptions</li>
+                                    <li>Payroll-related services (e.g., FICA / Section 125 plans)</li>
+                                    <li>Compressed gases</li>
+                                    <li>Fuel</li>
+                                    <li>Janitorial supplies</li>
+                                    <li>Office supplies</li>
+                                </ul>
+                                <p>Results vary by organization, contract structure, and vendor landscape.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How long does it typically take to see meaningful results?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>The initial review and adjustment phase often spans <strong>4–8 weeks</strong>. This is typically a one-time effort to align service levels and usage with actual needs, while revisiting pricing and contract terms based on current market conditions. <strong>Then allow one invoice cycle to see revised pricing flow through.</strong></p>
+                                <p>After that, the work shifts to <strong>ongoing monitoring</strong>. Vendor expenses are reviewed periodically, with adjustments made when usage, pricing, or service requirements drift over time. These follow-ups are usually incremental rather than disruptive.</p>
+                                <p>The ongoing effort is modest, but consistency matters. Small inefficiencies tend to accumulate if left unattended.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How often should vendor expenses be reviewed?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Most organizations benefit from reviewing vendor expenses on a quarterly or semi-annual basis, depending on volatility and materiality.</p>
+                                <p>Highly variable services tend to warrant more frequent review, while stable, contract-based services can often be reviewed less often. The goal is not constant renegotiation, but timely detection of misalignment as usage, pricing, or service needs evolve.</p>
+                                <p>Regular review helps prevent small inefficiencies from compounding unnoticed.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Are the savings shown guaranteed?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>No. The scenarios shown are <strong>illustrative</strong>, not guarantees.</p>
+                                <p>In some cases, a review confirms that pricing, service levels, and usage are already well-aligned. That outcome should be viewed positively, as it validates that strong stewardship and market-appropriate pricing are already in place.</p>
+                                <p>The value of the process is not only identifying savings, but establishing confidence that vendor spend remains appropriate over time.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Does this require changing vendors?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Not necessarily.</p>
+                                <p>In most cases, meaningful improvements can be achieved while retaining existing vendors by adjusting pricing, scope, or contract terms. Vendor changes are typically considered only when service requirements cannot be met competitively or when better-aligned alternatives exist.</p>
+                                <p>This tool does not assume disruption; it is designed to surface options and tradeoffs.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Can this work be done internally?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>Yes. Many organizations manage vendor reviews internally as part of regular financial oversight.</p>
+                                <p>The work is generally straightforward but detail-oriented, and it tends to compete with higher-priority responsibilities. As a result, reviews may rely heavily on vendor-provided information or focus primarily on pricing, rather than on whether services and usage remain well-matched to current needs.</p>
+                                <p>This tool is intended to support consistent, structured internal reviews by making scope, assumptions, and tradeoffs more explicit.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Can AI do this work?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>AI is excellent at structured, repeatable tasks such as:</p>
+                                <ul>
+                                    <li><strong>Document parsing</strong> — extracting information from invoices, contracts, and reports</li>
+                                    <li><strong>Vendor data cleanup</strong> — organizing messy datasets into something usable</li>
+                                    <li><strong>Anomaly detection</strong> — spotting irregular spending patterns</li>
+                                    <li><strong>Workflow summarization</strong> — condensing large information sets into actionable views</li>
+                                    <li><strong>Reporting drafts</strong> — accelerating the creation of clear client summaries</li>
+                                </ul>
+                                <p>These capabilities make the analysis faster and more thorough.</p>
+                                <p>Real-world optimization depends on capabilities AI does not reliably provide: ownership, negotiation, trust-building, and coordination. AI augments expert work rather than replacing it.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>How should these scenarios and reports be used?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>The scenarios are intended to support <strong>internal discussion and decision-making</strong>, not to serve as forecasts or commitments.</p>
+                                <p>Exported reports are best used as illustrative materials when evaluating options, prioritizing review efforts, or framing conversations with stakeholders. When shared externally, they should be presented as scenario-based analyses rather than promised outcomes.</p>
+                                <p>Professional judgment remains essential.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <button type="button" class="faq-button" aria-expanded="false">
+                                <span>Who created this tool?</span>
+                                <span class="faq-icon">+</span>
+                            </button>
+                            <div class="faq-content">
+                                <p>This tool was developed by a cost optimization practitioner as a standalone scenario exploration aid for finance professionals. It reflects a continuous vendor expense management approach, rather than a one-time sourcing or RFP exercise.</p>
+                                <p><strong>No data is collected, stored, or tracked.</strong></p>
+                                <p>If you have questions about the assumptions or how ongoing vendor expense review is typically handled in practice, you're welcome to reach out: <a href="mailto:brendan@marginsteward.com">brendan@marginsteward.com</a></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <footer><!-- extensible — no content at this time --></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script type="module" src="../src/main.js"></script>
+
+    <script>
+        (function() {
+            var toggle = document.getElementById('theme-toggle');
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    var current = document.documentElement.getAttribute('data-theme');
+                    var next = current === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', next);
+                    localStorage.setItem('ms-theme', next);
+                });
+            }
+        })();
+    </script>
+
+</body>
+
+</html>
