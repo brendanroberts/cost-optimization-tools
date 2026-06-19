@@ -22,9 +22,19 @@ function update() {
 
   const combinedEl = document.getElementById("combined-total");
   if (combinedEl) combinedEl.textContent = fmt((EMPLOYEE_TAKEHOME + EMPLOYER_FICA) * employees);
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("employees", employees);
+  history.replaceState(null, "", url);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+  const emp = parseInt(params.get("employees"), 10);
+  if (emp >= 5 && emp <= 3000) {
+    slider.value = emp;
+  }
+
   slider.addEventListener("input", update);
   update();
 });

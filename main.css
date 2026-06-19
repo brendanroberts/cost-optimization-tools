@@ -396,7 +396,7 @@ footer {
   border-bottom: 0.5px solid var(--border-subtle);
 }
 
-.calc-data-row:last-of-type {
+.calc-data-row:nth-last-child(2) {
   border-bottom: none;
 }
 
