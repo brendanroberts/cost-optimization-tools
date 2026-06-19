@@ -390,8 +390,8 @@ function main() {
   // see also https://ekoopmans.github.io/html2pdf.js/
   const exportBtn = document.getElementById('export-pdf-btn');
   if (exportBtn) {
-    let state = getStateFromUrl() || {};
     exportBtn.addEventListener('click', async () => {
+      const state = currentState || getStateFromUrl() || {};
       await exportReport(state);
     });
   }
