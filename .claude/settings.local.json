@@ -4,7 +4,15 @@
       "Bash(git:*)",
       "WebFetch(domain:humornama.com)",
       "Bash(curl:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Skill(run)",
+      "Bash(python3 -m http.server 8000 --directory /Users/broberts/src/roberts_consulting/public_tools)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(node -e \"const { chromium } = require\\('playwright'\\); console.log\\('ok'\\)\")",
+      "Bash(python3 -c \"from playwright.sync_api import sync_playwright; print\\('ok'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python3 -m playwright install chromium)",
+      "Bash(node *)"
     ]
   }
 }
